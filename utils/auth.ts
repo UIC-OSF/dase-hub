@@ -182,7 +182,7 @@ async function fetchGitHubFresh(url: string, token?: string | null, skipCache = 
 async function fetchWithToken(url: string, token: string | null, skipCache: boolean) {
     const headers: Record<string, string> = {
         'Accept': 'application/vnd.github.v3+json',
-        'User-Agent': 'EqualifyOpenSource'
+        'User-Agent': 'DASE-Hub'
     };
     
     if (token) {

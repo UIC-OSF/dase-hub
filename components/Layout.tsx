@@ -9,6 +9,8 @@ import config from '#src/utils/config';
 export const site = {
     name: config.siteName,
     favicon: config.favicon,
+    equalifyUrl: config.equalifyHubUrl,
+    githubOrg: config.githubOrg,
 };
 
 export const Logo: FC = () => (
@@ -67,8 +69,7 @@ export const Nav: FC<{ user?: User; product?: string }> = ({ user, product }) =>
                         <a href="/">Home</a>
                         <a href="/about">About</a>
                         <a href="/updates">Updates</a>
-                        <a href="/dashboard">Equalify Dashboard</a>
-                        <a href="/reflow">Equalify Reflow</a>
+                        <a href="/feedback">Feedback</a>
                         {user ? (
                             <>
                                 <a href={`/${user.login}`} style="display:flex;align-items:center;gap:8px;">
@@ -92,9 +93,8 @@ export const Nav: FC<{ user?: User; product?: string }> = ({ user, product }) =>
                 <div class="nav-mobile">
                     <a href="/">Home</a>
                     <a href="/about">About</a>
-                    <a href="/reports">Updates</a>
-                    <a href="/dashboard">Equalify Dashboard</a>
-                    <a href="/reflow">Equalify Reflow</a>
+                    <a href="/updates">Updates</a>
+                    <a href="/feedback">Feedback</a>
                     {user ? (
                         <>
                             <a href={`/${user.login}`}>{user.login}</a>
@@ -120,13 +120,14 @@ export const CallToAction: FC = () => {
     return (
         <section class="cta-section">
             <div class="cta-content">
-                <h2>Contribute to Equalify</h2>
+                <h2>Have a request for DASE Hub?</h2>
                 <p>
-                    We're building accessible technology for everyone. Join us in making 
-                    the web more inclusive through open source contributions.
+                    DASE Hub is driven by an agreed roadmap, not scattered messages. Share a
+                    feature idea, a metric you want surfaced, or a fix — every request is logged
+                    and triaged.
                 </p>
-                <a href={config.equalifyAppUrl} class="cta-button">
-                    Sign into Equalify
+                <a href="/feedback" class="cta-button">
+                    Share Feedback
                 </a>
             </div>
         </section>

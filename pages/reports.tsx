@@ -3,6 +3,7 @@ import type { Context } from 'hono';
 import { Layout } from '#src/components/Layout';
 import { getCurrentUser, getGitHubToken, fetchGitHub } from '#src/utils/auth';
 import { renderMarkdown } from '#src/utils/markdown';
+import config from '#src/utils/config';
 
 const styles = `
 /* Report cards */
@@ -201,30 +202,16 @@ function filenameToTitle(filename: string): string {
         .replace(/\b\w/g, (c: string) => c.toUpperCase());
 }
 
-// Attribute reports/updates to Equalify Dashboard in their titles
-// Examples:
-//   "April 2026 Development Report" -> "April 2026 Equalify Dashboard Development Report"
-//   "New Features & Bug Fixes" -> "Equalify Dashboard: New Features & Bug Fixes"
-function attributeTitle(title: string): string {
-    if (!title || title.toLowerCase().includes('equalify dashboard')) return title;
-    // Insert "Equalify Dashboard" before "Development Report"
-    if (/development report/i.test(title)) {
-        return title.replace(/development report/i, 'Equalify Dashboard Development Report');
-    }
-    // Otherwise prefix with "Equalify Dashboard: "
-    return `Equalify Dashboard: ${title}`;
-}
-
 // List view - shows reports + updates
 export const ReportsListPage: FC<{ reports: ReportListItem[]; updates: ReportListItem[] }> = ({ reports, updates }) => {
     const user = getCurrentUser();
 
     return (
-        <Layout title="Updates - Equalify Hub" styles={styles} user={user}>
+        <Layout title="Updates" styles={styles} user={user}>
             <div style="max-width:900px;margin:0 auto;padding:32px 48px 64px;">
                 <h1 style="font-size:32px;font-weight:700;color:var(--color-text);margin:0 0 8px 0;">Updates</h1>
                 <p style="color:var(--color-text-secondary);margin:0 0 32px 0;font-size:16px;">
-                    Monthly development reports, project news, and (soon) release notes for Equalify.
+                    Monthly development reports, project news, and release notes for DASE Hub.
                 </p>
 
                 <h2 style="font-size:20px;font-weight:600;color:var(--color-text);margin:0 0 16px 0;">Monthly Reports</h2>
@@ -232,7 +219,7 @@ export const ReportsListPage: FC<{ reports: ReportListItem[]; updates: ReportLis
                 {reports.length > 0 ? (
                     reports.map(report => (
                         <a href={`/reports/${report.slug}`} class="report-card">
-                            <h3>{attributeTitle(report.title)}</h3>
+                            <h3>{report.title}</h3>
                             {report.description && (
                                 <p>{report.description}</p>
                             )}
@@ -252,7 +239,7 @@ export const ReportsListPage: FC<{ reports: ReportListItem[]; updates: ReportLis
                         <h2 style="font-size:20px;font-weight:600;color:var(--color-text);margin:40px 0 16px 0;">News</h2>
                         {updates.map(update => (
                             <a href={`/updates/${update.slug}`} class="report-card">
-                                <h3>{attributeTitle(update.title)}</h3>
+                                <h3>{update.title}</h3>
                                 {update.description && (
                                     <p>{update.description}</p>
                                 )}
@@ -271,10 +258,10 @@ export const ReportsListPage: FC<{ reports: ReportListItem[]; updates: ReportLis
 // Single report view - shows one report's content
 export const ReportsDocPage: FC<{ report: ReportFile }> = ({ report }) => {
     const user = getCurrentUser();
-    const displayTitle = attributeTitle(report.title);
+    const displayTitle = report.title;
 
     return (
-        <Layout title={`${displayTitle} - Updates - Equalify Hub`} styles={styles} user={user}>
+        <Layout title={`${displayTitle} - Updates`} styles={styles} user={user}>
             <div style="max-width:900px;margin:0 auto;padding:32px 48px 64px;">
                 <a href="/updates" class="back-link">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -308,11 +295,11 @@ export const ReportsDocPage: FC<{ report: ReportFile }> = ({ report }) => {
     );
 };
 
-// Fetch a folder of markdown docs from equalify-docs repo
+// Fetch a folder of markdown docs from the configured docs repo
 async function fetchDocFolder(folder: string, token: string): Promise<ReportListItem[]> {
     try {
         const contents = await fetchGitHub(
-            `https://api.github.com/repos/EqualifyEverything/equalify-docs/contents/${folder}`,
+            `https://api.github.com/repos/${config.docsRepo}/contents/${folder}`,
             token
         );
 
@@ -323,7 +310,7 @@ async function fetchDocFolder(folder: string, token: string): Promise<ReportList
         const items = await Promise.all(mdFiles.map(async (file: any) => {
             try {
                 const fileData = await fetchGitHub(
-                    `https://api.github.com/repos/EqualifyEverything/equalify-docs/contents/${folder}/${file.name}`,
+                    `https://api.github.com/repos/${config.docsRepo}/contents/${folder}/${file.name}`,
                     token
                 );
 
@@ -392,7 +379,7 @@ export async function reportsDocHandler(c: Context) {
 
     try {
         const fileData = await fetchGitHub(
-            `https://api.github.com/repos/EqualifyEverything/equalify-docs/contents/reports/${filename}`,
+            `https://api.github.com/repos/${config.docsRepo}/contents/reports/${filename}`,
             token
         );
 

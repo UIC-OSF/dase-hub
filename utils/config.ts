@@ -1,9 +1,10 @@
 /**
- * Configuration for Equalify Hub
+ * Configuration for DASE Hub
  *
- * These values can be customized via environment variables when deploying
- * your own instance of Equalify Hub. Set these in your Lambda environment
- * variables or in a local .env file for development.
+ * DASE Hub is the central dashboard for the UIC Digital Accessibility team's
+ * projects. These values can be customized via environment variables when
+ * deploying. Set them in your Lambda environment variables or in a local
+ * .env file for development.
  */
 
 // Inline UIC logo (base64 PNG) — no external image dependency
@@ -13,26 +14,47 @@ const UIC_LOGO_DATA_URI = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAW0AAAF
 export const config = {
     /**
      * The name of this Hub instance
-     * @default "Equalify Hub"
+     * @default "DASE Hub"
      */
-    siteName: process.env.SITE_NAME || 'Equalify Hub',
+    siteName: process.env.SITE_NAME || 'DASE Hub',
 
     /**
-     * The URL of the Equalify app this Hub connects to
-     * Used for "Sign into Equalify" links and favicon
+     * The public URL where this Hub is served (CloudFront / Lambda Function URL).
+     * Used for absolute links in robots.txt, the sitemap, and security.txt.
+     * Leave blank until the deployment URL is known.
+     */
+    siteUrl: process.env.SITE_URL || '',
+
+    /**
+     * The URL of the Equalify Hub (the sibling site this was forked from).
+     * Used for "link out to Equalify" references.
+     * @default "https://equalify.uic.edu"
+     */
+    equalifyHubUrl: process.env.EQUALIFY_HUB_URL || 'https://equalify.uic.edu',
+
+    /**
+     * The URL of the Equalify application itself.
+     * Used for "Sign into Equalify" links and as the default favicon source.
      * @default "https://app.equalify.uic.edu"
      */
     equalifyAppUrl: process.env.EQUALIFY_APP_URL || 'https://app.equalify.uic.edu',
 
     /**
-     * The GitHub organization to display repos/issues from
+     * The GitHub organization to display repos/issues from.
      * @default "EqualifyEverything"
      */
     githubOrg: process.env.GITHUB_ORG || 'EqualifyEverything',
 
     /**
-     * The favicon URL for the site
-     * Defaults to the Equalify app's favicon
+     * The GitHub repo (owner/name) that backs the Updates/Reports content.
+     * Point this at a DASE-owned docs repo once one exists.
+     * @default "EqualifyEverything/equalify-docs"
+     */
+    docsRepo: process.env.DOCS_REPO || 'EqualifyEverything/equalify-docs',
+
+    /**
+     * The favicon URL for the site.
+     * Defaults to the Equalify app's favicon.
      */
     get favicon() {
         return process.env.FAVICON_URL || `${this.equalifyAppUrl}/favicon.ico`;

@@ -4,7 +4,7 @@ import { DynamoDBDocumentClient, GetCommand, PutCommand, DeleteCommand, QueryCom
 const client = new DynamoDBClient({ region: 'us-east-2' });
 const docClient = DynamoDBDocumentClient.from(client);
 
-const TABLE_NAME = 'equalifyuic-hub';
+const TABLE_NAME = 'dase-hub';
 
 // ============ GITHUB CACHE (1 min TTL) ============
 const CACHE_TTL_SECONDS = 60; // 1 minute
@@ -597,7 +597,7 @@ async function syncToCampaignMonitor(name: string, email: string, product: strin
     }
 }
 
-export async function addToWaitlist(name: string, email: string, ip: string, product: string = 'equalify'): Promise<WaitlistEntry | null> {
+export async function addToWaitlist(name: string, email: string, ip: string, product: string = 'dase-hub'): Promise<WaitlistEntry | null> {
     try {
         const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         const entry: WaitlistEntry = {
@@ -606,7 +606,7 @@ export async function addToWaitlist(name: string, email: string, ip: string, pro
             id,
             name: name.substring(0, 100) || '(none)',
             email: email.substring(0, 200) || '(none)',
-            product: product || 'equalify',
+            product: product || 'dase-hub',
             created_at: new Date().toISOString(),
             ip: ip || 'Unknown'
         };

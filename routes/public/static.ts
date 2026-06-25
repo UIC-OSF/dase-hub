@@ -2,30 +2,35 @@
 import type { Context } from 'hono';
 import config from '#src/utils/config';
 
+// Public site URL (CloudFront / Lambda Function URL). Empty until configured.
+const base = config.siteUrl.replace(/\/$/, '');
+
 export const robots = (c: Context) => {
-    return c.text(`User-agent: *
-Allow: /
-
-# ${config.siteName} - Developer tools for ${config.githubOrg}
-# https://equalify.uic.edu
-
-Sitemap: https://equalify.uic.edu/sitemap.xml`);
+    const lines = [
+        'User-agent: *',
+        'Allow: /',
+        '',
+        `# ${config.siteName} — central dashboard for the UIC Digital Accessibility team`,
+    ];
+    if (base) {
+        lines.push(`# ${base}`, '', `Sitemap: ${base}/sitemap.xml`);
+    }
+    return c.text(lines.join('\n'));
 };
 
 export const sitemap = (c: Context) => {
-    const pages = [
-        { loc: 'https://equalify.uic.edu/', priority: '1.0', changefreq: 'daily' },
-        { loc: 'https://equalify.uic.edu/about', priority: '0.9', changefreq: 'monthly' },
-        { loc: 'https://equalify.uic.edu/dashboard', priority: '0.9', changefreq: 'monthly' },
-        { loc: 'https://equalify.uic.edu/reflow', priority: '0.9', changefreq: 'monthly' },
-        { loc: 'https://equalify.uic.edu/updates', priority: '0.7', changefreq: 'monthly' },
-        { loc: 'https://equalify.uic.edu/signup', priority: '0.7', changefreq: 'monthly' },
+    const paths = [
+        { path: '/', priority: '1.0', changefreq: 'daily' },
+        { path: '/about', priority: '0.9', changefreq: 'monthly' },
+        { path: '/updates', priority: '0.7', changefreq: 'weekly' },
+        { path: '/feedback', priority: '0.6', changefreq: 'weekly' },
+        { path: '/signup', priority: '0.6', changefreq: 'monthly' },
     ];
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${pages.map(p => `  <url>
-    <loc>${p.loc}</loc>
+${paths.map(p => `  <url>
+    <loc>${base}${p.path}</loc>
     <changefreq>${p.changefreq}</changefreq>
     <priority>${p.priority}</priority>
   </url>`).join('\n')}
@@ -35,25 +40,26 @@ ${pages.map(p => `  <url>
 };
 
 export const security = (c: Context) => {
-    return c.text(`Contact: https://github.com/${config.githubOrg}
-Preferred-Languages: en
-Canonical: https://equalify.uic.edu/.well-known/security.txt`);
+    const lines = [
+        `Contact: https://github.com/${config.githubOrg}`,
+        'Preferred-Languages: en',
+    ];
+    if (base) lines.push(`Canonical: ${base}/.well-known/security.txt`);
+    return c.text(lines.join('\n'));
 };
 
 export const humans = (c: Context) => {
     return c.text(`/* TEAM */
-Organization: ${config.githubOrg}
-Site: ${config.equalifyAppUrl}
+Maintained by: UIC Digital Accessibility team
 GitHub: @${config.githubOrg}
 
 /* SITE */
+Name: ${config.siteName}
 Built with: TypeScript, Node.js, AWS Lambda
-Last updated: 2026
 Standards: HTML5, CSS3
-Philosophy: Fast, accessible developer tools for open source.
+Philosophy: A single source of truth for the team's projects.
 
 /* THANKS */
 GitHub - for the API
-UIC - for the support
-You - for contributing`);
+UIC - for the support`);
 };

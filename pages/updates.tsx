@@ -3,6 +3,7 @@ import type { Context } from 'hono';
 import { Layout } from '#src/components/Layout';
 import { getCurrentUser, getGitHubToken, fetchGitHub } from '#src/utils/auth';
 import { renderMarkdown } from '#src/utils/markdown';
+import config from '#src/utils/config';
 
 const styles = `
 /* Update cards */
@@ -202,31 +203,22 @@ function filenameToTitle(filename: string): string {
         .replace(/\b\w/g, (c: string) => c.toUpperCase());
 }
 
-// Attribute updates to Equalify Dashboard in their titles
-function attributeTitle(title: string): string {
-    if (!title || title.toLowerCase().includes('equalify dashboard')) return title;
-    if (/development report/i.test(title)) {
-        return title.replace(/development report/i, 'Equalify Dashboard Development Report');
-    }
-    return `Equalify Dashboard: ${title}`;
-}
-
 // List view - shows all updates as clickable cards
 export const UpdatesListPage: FC<{ updates: UpdateListItem[] }> = ({ updates }) => {
     const user = getCurrentUser();
-    
+
     return (
-        <Layout title="Updates - Equalify Hub" styles={styles} user={user}>
+        <Layout title="Updates" styles={styles} user={user}>
             <div style="max-width:900px;margin:0 auto;padding:32px 48px 64px;">
                 <h1 style="font-size:32px;font-weight:700;color:var(--color-text);margin:0 0 8px 0;">📢 Updates</h1>
                 <p style="color:var(--color-text-secondary);margin:0 0 32px 0;font-size:16px;">
-                    The latest news, announcements, and FAQs about Equalify.
+                    Progress updates, news, and release notes for DASE Hub and the team's projects.
                 </p>
-                
+
                 {updates.length > 0 ? (
                     updates.map(update => (
                         <a href={`/updates/${update.slug}`} class="update-card">
-                            <h3>{attributeTitle(update.title)}</h3>
+                            <h3>{update.title}</h3>
                             {update.description && (
                                 <p>{update.description}</p>
                             )}
@@ -248,10 +240,10 @@ export const UpdatesListPage: FC<{ updates: UpdateListItem[] }> = ({ updates }) 
 // Single update view - shows one update's content
 export const UpdatesDocPage: FC<{ update: UpdateFile }> = ({ update }) => {
     const user = getCurrentUser();
-    const displayTitle = attributeTitle(update.title);
+    const displayTitle = update.title;
 
     return (
-        <Layout title={`${displayTitle} - Updates - Equalify Hub`} styles={styles} user={user}>
+        <Layout title={`${displayTitle} - Updates`} styles={styles} user={user}>
             <div style="max-width:900px;margin:0 auto;padding:32px 48px 64px;">
                 <a href="/updates" class="back-link">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -292,7 +284,7 @@ export async function updatesHandler(c: Context) {
     let updates: UpdateListItem[] = [];
     try {
         const contents = await fetchGitHub(
-            'https://api.github.com/repos/EqualifyEverything/equalify-docs/contents/updates',
+            `https://api.github.com/repos/${config.docsRepo}/contents/updates`,
             token
         );
         
@@ -303,7 +295,7 @@ export async function updatesHandler(c: Context) {
             const updatePromises = mdFiles.map(async (file: any) => {
                 try {
                     const fileData = await fetchGitHub(
-                        `https://api.github.com/repos/EqualifyEverything/equalify-docs/contents/updates/${file.name}`,
+                        `https://api.github.com/repos/${config.docsRepo}/contents/updates/${file.name}`,
                         token
                     );
                     
@@ -364,7 +356,7 @@ export async function updatesDocHandler(c: Context) {
     
     try {
         const fileData = await fetchGitHub(
-            `https://api.github.com/repos/EqualifyEverything/equalify-docs/contents/updates/${filename}`,
+            `https://api.github.com/repos/${config.docsRepo}/contents/updates/${filename}`,
             token
         );
         

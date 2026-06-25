@@ -41,7 +41,7 @@ export const github = async (c: Context) => {
             const ghUser = await fetch('https://api.github.com/user', {
                 headers: { 
                     'Authorization': `Bearer ${token}`,
-                    'User-Agent': 'EqualifyOpenSource'
+                    'User-Agent': 'DASE-Hub'
                 }
             }).then(r => r.json());
             
@@ -146,7 +146,7 @@ function renderError(message: string): string {
             <div class="error-box">
                 <h1>Authentication Error</h1>
                 <p>${message}</p>
-                <a href="/">← Back to Equalify Open Source</a>
+                <a href="/">← Back to DASE Hub</a>
             </div>
         </div>
     `, errorPageCss);

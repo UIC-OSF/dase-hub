@@ -7,12 +7,11 @@ import { setEvent } from '#src/utils/event';
 
 // Migrated pages (JSX components)
 import { AboutPage } from '#src/pages/about';
-import { userGuideHandler, userGuideDocHandler } from '#src/pages/user-guide';
-import { technicalDocsHandler, technicalDocsDocHandler } from '#src/pages/technical-docs';
-import { RoadmapPage } from '#src/pages/roadmap';
-import { feedbackHandler, submitFeatureHandler, voteHandler } from '#src/pages/feedback';
+import { updatesHandler, updatesDocHandler } from '#src/pages/updates';
+import { reportsHandler, reportsDocHandler } from '#src/pages/reports';
+import { feedbackHandler, submitFeatureHandler, voteHandler, deleteFeatureHandler } from '#src/pages/feedback';
+import { signupHandler, signupSubmitHandler } from '#src/pages/signup';
 import { homeHandler } from '#src/pages/home';
-import { reflowHandler, reflowDocHandler } from '#src/pages/reflow';
 
 // Route handlers
 import { github, githubPro, callback, logout } from '#src/routes/public/auth';
@@ -20,6 +19,7 @@ import { robots, sitemap, security, humans } from '#src/routes/public/static';
 import { repo } from '#src/routes/public/repo';
 import { commits } from '#src/routes/public/commits';
 import { issues, issuesList } from '#src/routes/public/issues';
+import config from '#src/utils/config';
 
 // Create app for local dev (no Lambda bindings needed)
 const app = new Hono();
@@ -68,18 +68,41 @@ app.get('/logout', logout);
 // ============ MIGRATED ROUTES (Hono native JSX) ============
 app.get('/', homeHandler);
 app.get('/about', (c) => c.html(<AboutPage />));
-app.get('/user-guide', userGuideHandler);
-app.get('/user-guide/:slug', userGuideDocHandler);
-app.get('/technical-docs', technicalDocsHandler);
-app.get('/technical-docs/:slug', technicalDocsDocHandler);
-app.get('/reflow', reflowHandler);
-app.get('/reflow/*', reflowDocHandler);
-app.get('/roadmap', (c) => c.html(<RoadmapPage />));
+app.get('/updates', reportsHandler);
+app.get('/updates/:slug', updatesDocHandler);
+app.get('/reports', (c) => c.redirect('/updates', 302));
+app.get('/reports/:slug', reportsDocHandler);
+app.get('/roadmap', (c) => c.redirect('/about#roadmap', 302));
+// Equalify products live on the Equalify Hub — link out rather than host them here
+app.get('/dashboard', (c) => c.redirect(`${config.equalifyHubUrl}/dashboard`, 302));
+app.get('/dashboard/*', (c) => c.redirect(`${config.equalifyHubUrl}/dashboard`, 302));
+app.get('/reflow', (c) => c.redirect(`${config.equalifyHubUrl}/reflow`, 302));
+app.get('/reflow/*', (c) => c.redirect(`${config.equalifyHubUrl}/reflow`, 302));
+app.get('/signup', signupHandler);
+app.post('/signup/submit', signupSubmitHandler);
 app.get('/feedback', feedbackHandler);
 app.post('/feedback/submit', submitFeatureHandler);
 app.post('/feedback/vote', voteHandler);
+app.post('/feedback/delete', deleteFeatureHandler);
+app.get('/feature-request', feedbackHandler);
+app.post('/feature-request/submit', submitFeatureHandler);
+app.post('/feature-request/vote', voteHandler);
+app.post('/feature-request/delete', deleteFeatureHandler);
 
 // ============ DYNAMIC ROUTES ============
+// Only allow repos/issues/commits for our own org
+const ALLOWED_OWNER = config.githubOrg.toLowerCase();
+app.use('/:owner{[^/]+}/*', async (c, next) => {
+    const owner = c.req.param('owner')?.toLowerCase();
+    if (owner && owner !== ALLOWED_OWNER) return c.text('Not Found', 404);
+    await next();
+});
+app.use('/:owner', async (c, next) => {
+    const owner = c.req.param('owner')?.toLowerCase();
+    if (owner && owner !== ALLOWED_OWNER) return c.text('Not Found', 404);
+    await next();
+});
+
 app.get('/:owner', repo);
 app.get('/:owner/:repo', repo);
 app.get('/:owner/:repo/tree/:branch/*', repo);
@@ -87,12 +110,11 @@ app.get('/:owner/:repo/blob/:branch/*', repo);
 
 // Issues routes
 app.get('/:owner/:repo/issues', issuesList);
-app.get('/:owner/:repo/issues/:issue', issues);
+app.get('/:owner/:repo/issues/:number', issues);
 
 // Commits routes
 app.get('/:owner/:repo/commits', commits);
-app.get('/:owner/:repo/commits/:branch', commits);
-app.get('/:owner/:repo/commits/:branch/*', commits);
+app.get('/:owner/:repo/commit/:sha', commits);
 
 const port = parseInt(process.env.PORT || '3000', 10);
 console.log(`🚀 Server running at http://localhost:${port}`);

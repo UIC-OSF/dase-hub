@@ -1,208 +1,126 @@
-# Equalify Hub
+# DASE Hub
 
-The central hub for the Equalify project – organizing documentation, open-source repositories, contribution guides, KPI reports, and support resources in one accessible place.
-
-**Live at:** https://equalify.uic.edu
+The central dashboard for the UIC Digital Accessibility team's projects — one place to track projects, data, and progress, driven by an agreed roadmap rather than ad hoc messages.
 
 ---
 
 ## Table of Contents
 
-- [What is Equalify Hub?](#what-is-equalify-hub)
-- [Deploy Your Own Instance](#deploy-your-own-instance)
-  - [Prerequisites](#prerequisites)
-  - [Environment Variables](#environment-variables)
-  - [Local Development](#local-development)
-  - [AWS Lambda Deployment](#aws-lambda-deployment)
+- [What is DASE Hub?](#what-is-dase-hub)
+- [How it works](#how-it-works)
+- [Local Development](#local-development)
 - [Configuration](#configuration)
+- [AWS Lambda Deployment](#aws-lambda-deployment)
 - [Tech Stack](#tech-stack)
-- [Contributing](#contributing)
-- [Project Ownership](#project-ownership)
+- [Ownership](#ownership)
 
 ---
 
-## What is Equalify Hub?
+## What is DASE Hub?
 
-Equalify Hub serves multiple audiences:
+DASE Hub channels incoming requests and feedback into a single, tracked backlog so the dashboard is driven by an agreed roadmap. It surfaces data and progress across the team's projects (Equalify, AI Leaders, the Open Source Fund, and more), with coverage rolling out in phases.
 
-### For the Transition Team
-- **Support documentation** – Centralized place for Equalify support (not just bugs)
-- **KPI dashboards** – Track development progress and key metrics
-- **Issue tracking** – Aggregate view of issues across all repositories
+Equalify itself lives on the [Equalify Hub](https://equalify.uic.edu); DASE Hub links out to it rather than hosting those product pages.
 
-### For End Users
-- **User documentation** – Learn how to use Equalify effectively
-- **Support resources** – Find help and guidance
+## How it works
 
-### For Contributors
-- **Technical documentation** – API docs, code structure, architecture diagrams
-- **Contribution guides** – How to contribute to Equalify projects
-- **Repository overview** – Browse all EqualifyEverything repos
+- **Single backlog** — feature, data, and fix requests are logged as tracked issues; requests raised in chat get converted into issues so nothing is lost.
+- **One source of truth** — the backlog, not individual messages, is the record of what's requested and where it stands.
+- **Regular check-ins** — weekly during active buildout, shifting to monthly at steady state. New requests are reviewed and prioritized against the roadmap.
+- **Updates on releases** — a short progress update goes out on each meaningful update or release.
+
+See the [About page](https://equalify.uic.edu/about) for the full roadmap (it's also rendered from this app at `/about`).
 
 ---
 
-## Deploy Your Own Instance
+## Local Development
 
-Equalify Hub is designed to be deployed by other institutions running their own Equalify instance. Follow these steps to deploy your own Hub.
+This project uses [pnpm](https://pnpm.io/).
 
-### Prerequisites
-
-- Node.js 18+ and Yarn
-- AWS account with Lambda and DynamoDB access
-- A running Equalify application instance
-
-### Environment Variables
-
-The Hub uses environment variables for configuration. Copy `.env.example` to `.env` for local development, or set these as Lambda environment variables for production:
-
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `EQUALIFY_APP_URL` | Yes | `https://app.equalify.uic.edu` | The URL of your Equalify application. "Sign into Equalify" buttons will link here. |
-| `SITE_NAME` | No | `Equalify Hub` | The display name for your Hub instance. |
-| `GITHUB_ORG` | No | `EqualifyEverything` | The GitHub organization to display repos/issues from. |
-| `FAVICON_URL` | No | `{EQUALIFY_APP_URL}/favicon.ico` | Custom favicon URL. |
-| `ORG_LOGO_URL` | No | GitHub org avatar | Custom organization logo URL. |
-
-### Local Development
-
-1. **Clone the repository**
+1. **Install dependencies**
    ```bash
-   git clone https://github.com/EqualifyEverything/equalify-hub.git
-   cd equalify-hub
+   pnpm install
    ```
 
-2. **Install dependencies**
-   ```bash
-   yarn install
-   ```
-
-3. **Configure environment**
+2. **Configure environment** (optional — sensible defaults are built in)
    ```bash
    cp .env.example .env
-   # Edit .env with your configuration
+   # Edit .env as needed
    ```
 
-4. **Start development server**
+3. **Start the dev server**
    ```bash
-   yarn start
+   pnpm start
    ```
-   
-   This builds Tailwind CSS and starts the local server with hot reloading.
-
-5. **Build for production**
-   ```bash
-   yarn build:css  # Build CSS only
-   yarn build      # Full build and deploy to Lambda
-   ```
-
-### AWS Lambda Deployment
-
-#### 1. Set up AWS resources
-
-You'll need:
-- **Lambda function** – Node.js 18+ runtime
-- **DynamoDB table** – For feature requests and user data
-- **API Gateway** – HTTP API or Function URL for web access
-
-#### 2. Configure Lambda environment variables
-
-In the AWS Lambda console, add these environment variables:
-
-```
-EQUALIFY_APP_URL=https://your-equalify-instance.com
-SITE_NAME=Your Organization Hub
-GITHUB_ORG=YourGitHubOrg
-```
-
-#### 3. Configure AWS CLI profile
-
-Update `package.json` to use your AWS profile:
-
-```json
-{
-  "scripts": {
-    "sso": "aws sso login --profile your-profile",
-    "build": "... --profile your-profile ..."
-  }
-}
-```
-
-#### 4. Deploy
-
-```bash
-# Authenticate with AWS
-yarn sso
-
-# Build and deploy
-yarn build
-```
-
-This will:
-1. Build Tailwind CSS
-2. Bundle the application with esbuild
-3. Create a Lambda deployment package
-4. Upload to your Lambda function
+   This builds Tailwind CSS and starts a local server at http://localhost:3000 with `tsx`.
 
 ---
 
 ## Configuration
 
-### Customizing the Sign-In Link
+All configuration is environment-driven (see [`utils/config.ts`](utils/config.ts) and [`.env.example`](.env.example)):
 
-The "Sign into Equalify" button appears throughout the Hub. To point it to your Equalify instance:
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `SITE_NAME` | `DASE Hub` | Display name shown in the header, footer, and page titles. |
+| `SITE_URL` | _(empty)_ | Public URL of the deployment (CloudFront / Lambda Function URL). Used for absolute links in `robots.txt`, the sitemap, and `security.txt`. |
+| `GITHUB_ORG` | `EqualifyEverything` | GitHub org for the repo browser and "View on GitHub" links. |
+| `DOCS_REPO` | `EqualifyEverything/equalify-docs` | `owner/name` of the repo backing the Updates/Reports content. Point at a DASE-owned docs repo when one exists. |
+| `EQUALIFY_HUB_URL` | `https://equalify.uic.edu` | Equalify Hub site, used for link-outs and the `/dashboard` & `/reflow` redirects. |
+| `EQUALIFY_APP_URL` | `https://app.equalify.uic.edu` | Equalify application, used as the default favicon source. |
+| `FAVICON_URL` | `{EQUALIFY_APP_URL}/favicon.ico` | Custom favicon URL. |
+| `ORG_LOGO_URL` | inline UIC logo | Custom logo URL. |
+| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | _(empty)_ | GitHub OAuth credentials for the repo-browser sign-in. |
+
+---
+
+## AWS Lambda Deployment
+
+The app runs as a single AWS Lambda function fronted by a CloudFront distribution or a Lambda Function URL.
+
+### Required resources
+
+- **Lambda function** named `dase-hub` (Node.js 18+ runtime).
+- **DynamoDB table** named `dase-hub` in `us-east-2`, with:
+  - Partition key `pk` (String), sort key `sk` (String)
+  - TTL enabled on the `ttl` attribute (used to expire the GitHub response cache)
+- **A public entry point** — a CloudFront distribution or a Lambda Function URL.
+
+The table is a single-table design holding several entity types (`GHCACHE`, `USER`, `VIEW`, `SEARCH`, `FEATURE`, `WAITLIST`), all keyed by `pk`/`sk`.
+
+### Deploy
+
+The deploy script uses the `equalifyuic` AWS CLI profile. Update the `--profile` in [`package.json`](package.json) if you use a different one.
 
 ```bash
-# In .env (local) or Lambda environment variables (production)
-EQUALIFY_APP_URL=https://your-equalify-instance.com
-```
+# Authenticate with AWS
+pnpm sso
 
-### Customizing the Site Name
-
-The site name appears in the header, footer, and page titles:
-
-```bash
-SITE_NAME=Acme Accessibility Hub
-```
-
-### Connecting to Your GitHub Organization
-
-To display repositories and issues from your organization:
-
-```bash
-GITHUB_ORG=YourOrgName
+# Build CSS, bundle with esbuild, and update the Lambda function code
+pnpm build
 ```
 
 ---
 
 ## Tech Stack
 
-- **TypeScript** – Type-safe development
-- **Hono** – Lightweight web framework
-- **AWS Lambda** – Serverless deployment
-- **DynamoDB** – NoSQL database for feature requests
-- **Tailwind CSS** – Utility-first styling
-- **esbuild** – Fast bundling
+- **TypeScript** — type-safe development
+- **Hono** — lightweight web framework (with JSX)
+- **AWS Lambda** — serverless deployment
+- **DynamoDB** — single-table storage for views, feature requests, the signup list, and a GitHub response cache
+- **Tailwind CSS** — styling
+- **esbuild** — fast bundling
 
 ---
 
-## Contributing Documentation
+## Ownership
 
-Helen's team and other contributors can easily add documentation:
+Maintained by the UIC Digital Accessibility team.
 
-1. **Sign in with GitHub** – Must be part of the EqualifyEverything organization
-2. **Create/edit Markdown files** – Standard markdown format
-3. **Submit via GitHub** – Basic git operations only
-
----
-
-## Project Ownership
-
-Owned by Christopher Aitken as part of UIC's Digital Accessibility initiative.
-
-**Key Contacts:**
-- Christopher Aitken – Technical lead, Equalify Hub
-- Jemma Ku – Oversight & integration with internal accessibility projects
-- Blake & Trey – Equalify leadership
+- **Responsible — Chris:** builds and maintains the dashboard, triages requests, maintains the roadmap.
+- **Accountable — Blake:** sets direction and priorities, approves the roadmap.
+- **Consulted — Jemma & Stefin:** advise on scope, priorities, and meeting cadence.
+- **Informed — Helen & Trey:** kept up to date on progress and releases.
 
 ---
 

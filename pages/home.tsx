@@ -127,10 +127,10 @@ body {
 }
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 24px;
 }
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     .products-grid { grid-template-columns: 1fr; }
 }
 .product-card {
@@ -145,12 +145,24 @@ body {
     flex-direction: column;
     align-items: center;
 }
-.product-card:hover {
+a.product-card:hover {
     border-color: #C8102E;
     transform: translateY(-4px);
     box-shadow: 0 8px 24px rgba(0,0,0,0.1);
     text-decoration: none;
 }
+.project-status {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+}
+.status-live { background: #d1fae5; color: #065f46; }
+.status-planned { background: #f3f4f6; color: #4b5563; }
 .product-icon {
     width: 64px;
     height: 64px;
@@ -220,23 +232,18 @@ export const HomePage: FC = () => {
     const user = getCurrentUser();
 
     return (
-        <BaseLayout title={`${site.name} – UIC's Open Source Web Accessibility Ecosystem`} styles={styles}>
+        <BaseLayout title="Central dashboard for UIC's Digital Accessibility team" styles={styles}>
             <Nav user={user} />
             <main>
-
-            {/* Reflow Beta Notification Banner */}
-            <div class="notification-banner">
-                Equalify Reflow Beta now available! Translate PDFs into accessible documents.{' '}
-                <a href="/reflow">More Info &rsaquo;</a>
-            </div>
 
             {/* Hero Section */}
             <section class="hero">
                 <div class="hero-content">
-                    <h1>Introducing Equalify</h1>
+                    <h1>DASE Hub</h1>
                     <p>
-                        UIC's open source web accessibility ecosystem. We currently offer tools
-                        to track accessibility issues and convert PDFs into accessible documents.
+                        The central dashboard for UIC's Digital Accessibility team — one place to
+                        track projects, data, and progress across the work we do, driven by an
+                        agreed roadmap.
                     </p>
                     <div class="hero-buttons">
                         <a href="/about#roadmap" class="hero-btn hero-btn-primary">
@@ -260,14 +267,15 @@ export const HomePage: FC = () => {
                 </div>
             </section>
 
-            {/* Product Cards */}
+            {/* Project Cards */}
             <section class="products-section">
-                <h2>Our Products</h2>
+                <h2>Projects we track</h2>
                 <p class="section-desc">
-                    Explore the Equalify ecosystem — purpose-built tools for web accessibility.
+                    DASE Hub surfaces data and progress across the team's projects. Coverage is
+                    rolling out in phases — see the <a href="/about#roadmap">roadmap</a>.
                 </p>
                 <div class="products-grid">
-                    <a href="/dashboard" class="product-card">
+                    <a href={site.equalifyUrl} class="product-card" rel="noopener" target="_blank">
                         <div class="product-icon">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
                                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
@@ -275,29 +283,43 @@ export const HomePage: FC = () => {
                                 <line x1="9" y1="21" x2="9" y2="9"/>
                             </svg>
                         </div>
-                        <h3>Equalify Dashboard</h3>
+                        <span class="project-status status-live">Live</span>
+                        <h3>Equalify</h3>
                         <p>
-                            Track and manage web accessibility issues across your sites. Scan, audit, and monitor
-                            your organization's accessibility compliance.
+                            Open-source platform for tracking and managing web accessibility issues
+                            across sites. Visit the Equalify Hub for tools, docs, and updates.
                         </p>
-                        <span class="product-link">Learn more &rarr;</span>
+                        <span class="product-link">Open Equalify Hub &rarr;</span>
                     </a>
-                    <a href="/reflow" class="product-card">
+                    <div class="product-card">
                         <div class="product-icon">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                <polyline points="14 2 14 8 20 8"/>
-                                <line x1="16" y1="13" x2="8" y2="13"/>
-                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <circle cx="12" cy="12" r="3"/>
+                                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
                             </svg>
                         </div>
-                        <h3>Equalify Reflow</h3>
+                        <span class="project-status status-planned">On the roadmap</span>
+                        <h3>AI Leaders</h3>
                         <p>
-                            Convert PDFs into accessible, reflowable content. An open-source pipeline
-                            powered by AI to escape static files.
+                            Data views for the AI Leaders project are planned as DASE Hub expands its
+                            coverage across the team's work.
                         </p>
-                        <span class="product-link">Learn more &rarr;</span>
-                    </a>
+                        <span class="product-link">Coming soon</span>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
+                                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                            </svg>
+                        </div>
+                        <span class="project-status status-planned">On the roadmap</span>
+                        <h3>Open Source Fund</h3>
+                        <p>
+                            Coverage for the Open Source Fund is planned as part of the team's
+                            broader project rollout.
+                        </p>
+                        <span class="product-link">Coming soon</span>
+                    </div>
                 </div>
 
                 <div class="open-source-callout">
@@ -305,12 +327,12 @@ export const HomePage: FC = () => {
                         <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
                     </svg>
                     <div>
-                        <h3>Open Source</h3>
+                        <h3>Built in the open</h3>
                         <p>
-                            All Equalify tools are open source and maintained by the{' '}
-                            University of Illinois Chicago (UIC) Digital Accessibility Engineering team.
-                            Browse our repositories, contribute code, and help make the web more accessible.{' '}
-                            <a href="https://github.com/EqualifyEverything" rel="noopener" target="_blank">View on GitHub &rarr;</a>
+                            DASE Hub and the team's projects are maintained by the{' '}
+                            University of Illinois Chicago (UIC) Digital Accessibility team.
+                            Browse the repositories and follow along.{' '}
+                            <a href={`https://github.com/${site.githubOrg}`} rel="noopener" target="_blank">View on GitHub &rarr;</a>
                         </p>
                     </div>
                 </div>

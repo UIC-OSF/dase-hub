@@ -8,12 +8,10 @@ import { setEvent } from '#src/utils/event';
 
 // Migrated pages (JSX components)
 import { AboutPage } from '#src/pages/about';
-import { dashboardHandler, dashboardUserGuideListHandler, dashboardTechnicalListHandler, dashboardUserGuideDocHandler, dashboardTechnicalDocHandler } from '#src/pages/dashboard';
 import { updatesHandler, updatesDocHandler } from '#src/pages/updates';
 import { reportsHandler, reportsDocHandler } from '#src/pages/reports';
-import { reflowHandler, reflowDocHandler } from '#src/pages/reflow';
 import { feedbackHandler, submitFeatureHandler, voteHandler, deleteFeatureHandler } from '#src/pages/feedback';
-import { signupHandler, signupReflowHandler, signupSubmitHandler } from '#src/pages/signup';
+import { signupHandler, signupSubmitHandler } from '#src/pages/signup';
 import { homeHandler } from '#src/pages/home';
 
 // Route handlers (all native Hono now)
@@ -67,28 +65,19 @@ app.get('/logout', logout);
 // ============ MIGRATED ROUTES (Hono native JSX) ============
 app.get('/', homeHandler);
 app.get('/about', (c) => c.html(<AboutPage />));
-app.get('/dashboard', dashboardHandler);
-app.get('/dashboard/user-guide', dashboardUserGuideListHandler);
-app.get('/dashboard/user-guide/:section/:page', dashboardUserGuideDocHandler);
-app.get('/dashboard/technical', dashboardTechnicalListHandler);
-app.get('/dashboard/technical/:slug', dashboardTechnicalDocHandler);
 // Combined listing page (Monthly Reports + News + future Releases) lives at /updates
 app.get('/updates', reportsHandler);
 app.get('/updates/:slug', updatesDocHandler);
-// Individual report pages keep their /reports/:slug URLs (they map to equalify-docs/reports/)
+// Individual report pages keep their /reports/:slug URLs (they map to <docsRepo>/reports/)
 app.get('/reports', (c) => c.redirect('/updates', 302));
 app.get('/reports/:slug', reportsDocHandler);
-app.get('/reflow', reflowHandler);
-app.get('/reflow/*', reflowDocHandler);
 app.get('/roadmap', (c) => c.redirect('/about#roadmap', 302));
-// Backward-compatible redirects for old doc URLs (302 to avoid aggressive browser caching)
-app.get('/user-guide', (c) => c.redirect('/dashboard/user-guide', 302));
-// Old flat-slug user guide URLs no longer have a 1:1 mapping; redirect to the index
-app.get('/user-guide/:slug', (c) => c.redirect('/dashboard/user-guide', 302));
-app.get('/technical-docs', (c) => c.redirect('/dashboard/technical', 302));
-app.get('/technical-docs/:slug', (c) => c.redirect(`/dashboard/technical/${c.req.param('slug')}`, 302));
+// Equalify products live on the Equalify Hub — link out rather than host them here
+app.get('/dashboard', (c) => c.redirect(`${config.equalifyHubUrl}/dashboard`, 302));
+app.get('/dashboard/*', (c) => c.redirect(`${config.equalifyHubUrl}/dashboard`, 302));
+app.get('/reflow', (c) => c.redirect(`${config.equalifyHubUrl}/reflow`, 302));
+app.get('/reflow/*', (c) => c.redirect(`${config.equalifyHubUrl}/reflow`, 302));
 app.get('/signup', signupHandler);
-app.get('/signup/reflow', signupReflowHandler);
 app.post('/signup/submit', signupSubmitHandler);
 app.get('/feedback', feedbackHandler);
 app.post('/feedback/submit', submitFeatureHandler);

@@ -13,6 +13,14 @@ import { reportsHandler, reportsDocHandler } from '#src/pages/reports';
 import { feedbackHandler, submitFeatureHandler, voteHandler, deleteFeatureHandler } from '#src/pages/feedback';
 import { signupHandler, signupSubmitHandler } from '#src/pages/signup';
 import { homeHandler } from '#src/pages/home';
+import { keyResultsHandler } from '#src/pages/key-results';
+import { submitStatsHandler, submitStatsUpdateHandler, submitStatsAddHandler } from '#src/pages/submit-stats';
+import {
+    adminHandler, adminLoginHandler, adminLogoutHandler, adminSyncHandler,
+    adminMoveHandler, adminObjectiveAddHandler, adminObjectiveDeleteHandler, adminMetricDeleteHandler,
+    adminObjectiveToggleHandler, adminMetricToggleHandler,
+} from '#src/pages/admin';
+import { syncEqualifyStats } from '#src/routes/internal/sync-equalify';
 
 // Route handlers (all native Hono now)
 import { github, githubPro, callback, logout } from '#src/routes/public/auth';
@@ -79,6 +87,21 @@ app.get('/reflow', (c) => c.redirect(`${config.equalifyHubUrl}/reflow`, 302));
 app.get('/reflow/*', (c) => c.redirect(`${config.equalifyHubUrl}/reflow`, 302));
 app.get('/signup', signupHandler);
 app.post('/signup/submit', signupSubmitHandler);
+// Key Results dashboard + manual stats + admin
+app.get('/key-results', keyResultsHandler);
+app.get('/submit-stats', submitStatsHandler);
+app.post('/submit-stats', submitStatsUpdateHandler);
+app.post('/submit-stats/add', submitStatsAddHandler);
+app.get('/admin', adminHandler);
+app.post('/admin/login', adminLoginHandler);
+app.get('/admin/logout', adminLogoutHandler);
+app.post('/admin/sync', adminSyncHandler);
+app.post('/admin/move', adminMoveHandler);
+app.post('/admin/objective/add', adminObjectiveAddHandler);
+app.post('/admin/objective/delete', adminObjectiveDeleteHandler);
+app.post('/admin/objective/toggle', adminObjectiveToggleHandler);
+app.post('/admin/metric/delete', adminMetricDeleteHandler);
+app.post('/admin/metric/toggle', adminMetricToggleHandler);
 app.get('/feedback', feedbackHandler);
 app.post('/feedback/submit', submitFeatureHandler);
 app.post('/feedback/vote', voteHandler);
@@ -126,6 +149,13 @@ app.get('/:owner/:repo/commit/:sha', commits);
 const honoHandler = handle(app);
 
 export const handler = async (event: any, context: any) => {
+    // Internal: sync Key Results stats from Equalify via EventBridge schedule or Lambda Test
+    // Event shape: { "sync": "equalify" }
+    if (event.sync) {
+        const result = await syncEqualifyStats();
+        return { statusCode: result.ok ? 200 : 500, body: JSON.stringify(result, null, 2) };
+    }
+
     // Internal: generate report via Lambda Test or EventBridge
     // Event shape: { "report": { "issueNumber": 587, "month": "2026-03", "polish": true, "push": false } }
     if (event.report) {

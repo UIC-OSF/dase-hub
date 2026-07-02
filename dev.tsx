@@ -12,6 +12,13 @@ import { reportsHandler, reportsDocHandler } from '#src/pages/reports';
 import { feedbackHandler, submitFeatureHandler, voteHandler, deleteFeatureHandler } from '#src/pages/feedback';
 import { signupHandler, signupSubmitHandler } from '#src/pages/signup';
 import { homeHandler } from '#src/pages/home';
+import { keyResultsHandler } from '#src/pages/key-results';
+import { submitStatsHandler, submitStatsUpdateHandler, submitStatsAddHandler } from '#src/pages/submit-stats';
+import {
+    adminHandler, adminLoginHandler, adminLogoutHandler, adminSyncHandler,
+    adminMoveHandler, adminObjectiveAddHandler, adminObjectiveDeleteHandler, adminMetricDeleteHandler,
+    adminObjectiveToggleHandler, adminMetricToggleHandler,
+} from '#src/pages/admin';
 
 // Route handlers
 import { github, githubPro, callback, logout } from '#src/routes/public/auth';
@@ -80,6 +87,21 @@ app.get('/reflow', (c) => c.redirect(`${config.equalifyHubUrl}/reflow`, 302));
 app.get('/reflow/*', (c) => c.redirect(`${config.equalifyHubUrl}/reflow`, 302));
 app.get('/signup', signupHandler);
 app.post('/signup/submit', signupSubmitHandler);
+// Key Results dashboard + manual stats + admin
+app.get('/key-results', keyResultsHandler);
+app.get('/submit-stats', submitStatsHandler);
+app.post('/submit-stats', submitStatsUpdateHandler);
+app.post('/submit-stats/add', submitStatsAddHandler);
+app.get('/admin', adminHandler);
+app.post('/admin/login', adminLoginHandler);
+app.get('/admin/logout', adminLogoutHandler);
+app.post('/admin/sync', adminSyncHandler);
+app.post('/admin/move', adminMoveHandler);
+app.post('/admin/objective/add', adminObjectiveAddHandler);
+app.post('/admin/objective/delete', adminObjectiveDeleteHandler);
+app.post('/admin/objective/toggle', adminObjectiveToggleHandler);
+app.post('/admin/metric/delete', adminMetricDeleteHandler);
+app.post('/admin/metric/toggle', adminMetricToggleHandler);
 app.get('/feedback', feedbackHandler);
 app.post('/feedback/submit', submitFeatureHandler);
 app.post('/feedback/vote', voteHandler);

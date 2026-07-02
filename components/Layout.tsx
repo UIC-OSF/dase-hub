@@ -68,6 +68,7 @@ export const Nav: FC<{ user?: User; product?: string }> = ({ user, product }) =>
                     <div class="nav-links">
                         <a href="/">Home</a>
                         <a href="/about">About</a>
+                        <a href="/key-results">Key Results</a>
                         <a href="/updates">Updates</a>
                         <a href="/feedback">Feedback</a>
                         {user ? (
@@ -93,6 +94,7 @@ export const Nav: FC<{ user?: User; product?: string }> = ({ user, product }) =>
                 <div class="nav-mobile">
                     <a href="/">Home</a>
                     <a href="/about">About</a>
+                    <a href="/key-results">Key Results</a>
                     <a href="/updates">Updates</a>
                     <a href="/feedback">Feedback</a>
                     {user ? (

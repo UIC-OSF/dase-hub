@@ -2,7 +2,7 @@ import type { FC } from 'hono/jsx';
 import type { Context } from 'hono';
 import { Layout } from '#src/components/Layout';
 import { getCurrentUser } from '#src/utils/auth';
-import { getOrSeedObjectives, visibleObjectives, Objective, Metric } from '#src/utils/keyResults';
+import { getOrSeedObjectives, visibleObjectives, renderSubtitle, Objective, Metric } from '#src/utils/keyResults';
 
 const styles = `
 .kr-container {
@@ -47,7 +47,7 @@ const styles = `
 }
 .kr-card .kr-dates {
     font-size: 13px;
-    color: #6b7280;
+    color: #4b5563;
     margin: 0 0 16px;
 }
 .kr-metric { margin-bottom: 18px; }
@@ -92,13 +92,13 @@ const styles = `
     align-items: center;
     gap: 4px;
     font-size: 11px;
-    color: #6b7280;
+    color: #4b5563;
     margin-top: 4px;
 }
 .kr-footer-note {
     margin-top: 32px;
     font-size: 13px;
-    color: #6b7280;
+    color: #4b5563;
     text-align: center;
 }
 .kr-footer-note a { color: #C8102E; }
@@ -156,7 +156,7 @@ export const KeyResultsPage: FC<{ objectives: Objective[] }> = ({ objectives }) 
                     {objectives.map(objective => (
                         <article class="kr-card">
                             <h3>{objective.title}{objective.upcoming ? ' (Upcoming)' : ''}</h3>
-                            <p class="kr-dates">{objective.subtitle}</p>
+                            <p class="kr-dates">{renderSubtitle(objective.subtitle)}</p>
                             {objective.metrics.map(metric => <MetricRow metric={metric} />)}
                         </article>
                     ))}

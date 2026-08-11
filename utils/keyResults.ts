@@ -41,6 +41,7 @@ export interface Metric {
 export interface Objective {
     id: string;
     title: string;
+    /** Date-range line under the title. May contain {today}, rendered as the current month at view time. */
     subtitle: string;
     order: number;
     upcoming?: boolean;
@@ -66,6 +67,12 @@ export interface Submission {
     objectiveId: string;
     metricLabel: string;
     change: string;
+}
+
+/** Render a subtitle, replacing {today} with the current month (e.g. "Aug 2026"). */
+export function renderSubtitle(subtitle: string): string {
+    const now = new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'America/Chicago' });
+    return subtitle.replace(/\{today\}/g, now);
 }
 
 // ── Objectives ────────────────────────────────────────────────────────────────
@@ -211,8 +218,26 @@ export async function getRecentSubmissions(limit: number = 15): Promise<Submissi
 
 const SEED: Objective[] = [
     {
+        id: 'equalify-scanning', order: 5,
+        title: 'Equalify Scanning', subtitle: 'Live stats, synced from Equalify',
+        metrics: [
+            { id: 'scanned-urls', label: 'Scanned URLs', metric: 'Count: —', currentValue: 95, status: 'high', source: 'equalify', sourceKey: 'scanned_urls', metricTemplate: 'Count: {value}' },
+            { id: 'scanned-html', label: 'HTML Pages Scanned', metric: 'Count: —', currentValue: 90, status: 'high', source: 'equalify', sourceKey: 'scanned_html', metricTemplate: 'Count: {value}' },
+            { id: 'scanned-pdfs', label: 'PDFs Scanned (All)', metric: 'Count: —', currentValue: 90, status: 'high', source: 'equalify', sourceKey: 'scanned_pdfs', metricTemplate: 'Count: {value}' },
+            { id: 'scanned-pdfs-red', label: 'PDFs Scanned (RED)', metric: 'Count: —', currentValue: 88, status: 'high', source: 'equalify', sourceKey: 'scanned_pdfs_red', metricTemplate: 'Count: {value}' },
+        ],
+    },
+    {
+        id: 'equalify-usage', order: 6,
+        title: 'Equalify Audits & Users', subtitle: 'Live stats, synced from Equalify',
+        metrics: [
+            { id: 'audits', label: 'Audits', metric: 'Count: —', currentValue: 80, status: 'high', source: 'equalify', sourceKey: 'audits_total', metricTemplate: 'Count: {value}' },
+            { id: 'active-users', label: 'UIC Users', metric: 'Users: —', currentValue: 35, status: 'med', source: 'equalify', sourceKey: 'active_users', metricTemplate: 'Users: {value}' },
+        ],
+    },
+    {
         id: 'promote-awareness', order: 10,
-        title: 'Promote General Accessibility Awareness', subtitle: 'Oct 2025 - Jan 2026',
+        title: 'Promote General Accessibility Awareness', subtitle: 'Oct 2025 - {today}',
         metrics: [
             { id: 'training-complete', label: 'Completion of Training', metric: 'Count: 211', currentValue: 70, status: 'high' },
             { id: 'training-progress', label: 'Training in Progress', metric: 'Count: 112', currentValue: 40, status: 'med' },
@@ -222,7 +247,7 @@ const SEED: Objective[] = [
     },
     {
         id: 'deliver-training', order: 20,
-        title: 'Deliver Comprehensive Accessibility Training', subtitle: 'Jan 2025 - Dec 2025',
+        title: 'Deliver Comprehensive Accessibility Training', subtitle: 'Jan 2025 - {today}',
         metrics: [
             { id: 'webinar-attendees', label: 'Monthly Accessibility Webinar Attendees', metric: 'Total: 912 People', currentValue: 91, status: 'high' },
             { id: 'dept-attendees', label: 'Department & Unit Training Attendees', metric: 'Total: 175 People', currentValue: 80, status: 'high' },
@@ -230,7 +255,7 @@ const SEED: Objective[] = [
     },
     {
         id: 'consultation', order: 30,
-        title: 'Provide Consultation Services', subtitle: 'Dec 2025 - Jan 2026',
+        title: 'Provide Consultation Services', subtitle: 'Dec 2025 - {today}',
         metrics: [
             { id: 'tickets', label: 'Help Desk Tickets Resolved', metric: 'Closed: 263', currentValue: 95, status: 'high' },
             { id: 'office-hours', label: 'Office Hours', metric: 'Total: 56 Hours', currentValue: 25, status: 'med' },
@@ -239,7 +264,7 @@ const SEED: Objective[] = [
     },
     {
         id: 'outreach', order: 40,
-        title: 'Expand Accessibility Outreach & Partnerships', subtitle: 'May 2024 - Jan 2026',
+        title: 'Expand Accessibility Outreach & Partnerships', subtitle: 'May 2024 - {today}',
         metrics: [
             { id: 'liaisons', label: 'UIC Accessibility Liaisons', metric: 'Total: 56', currentValue: 56, status: 'med' },
             { id: 'depts-engaged', label: 'Departments Engaged', metric: 'Count: 62', currentValue: 62, status: 'med' },

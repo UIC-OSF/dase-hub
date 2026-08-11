@@ -13,7 +13,7 @@ import { feedbackHandler, submitFeatureHandler, voteHandler, deleteFeatureHandle
 import { signupHandler, signupSubmitHandler } from '#src/pages/signup';
 import { homeHandler } from '#src/pages/home';
 import { keyResultsHandler } from '#src/pages/key-results';
-import { submitStatsHandler, submitStatsUpdateHandler, submitStatsAddHandler } from '#src/pages/submit-stats';
+import { submitStatsHandler, submitStatsUpdateHandler, submitStatsAddHandler, submitStatsEditFormHandler, submitStatsNewFormHandler } from '#src/pages/submit-stats';
 import {
     adminHandler, adminLoginHandler, adminLogoutHandler, adminSyncHandler,
     adminMoveHandler, adminObjectiveAddHandler, adminObjectiveDeleteHandler, adminMetricDeleteHandler,
@@ -90,6 +90,8 @@ app.post('/signup/submit', signupSubmitHandler);
 // Key Results dashboard + manual stats + admin
 app.get('/key-results', keyResultsHandler);
 app.get('/submit-stats', submitStatsHandler);
+app.get('/submit-stats/edit', submitStatsEditFormHandler);
+app.get('/submit-stats/new', submitStatsNewFormHandler);
 app.post('/submit-stats', submitStatsUpdateHandler);
 app.post('/submit-stats/add', submitStatsAddHandler);
 app.get('/admin', adminHandler);

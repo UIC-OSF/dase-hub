@@ -5,7 +5,7 @@ import { getCurrentUser } from '#src/utils/auth';
 import { isAdminAuthed, isAdminConfigured, tryAdminLogin, adminLogout } from '#src/utils/adminAuth';
 import {
     getOrSeedObjectives, getIntegration, moveObjective, putObjective, deleteObjective, deleteMetric,
-    setObjectiveHidden, updateMetric, getRecentSubmissions, Objective, IntegrationState, Submission,
+    setObjectiveHidden, updateMetric, getRecentSubmissions, renderSubtitle, Objective, IntegrationState, Submission,
 } from '#src/utils/keyResults';
 import { syncEqualifyStats } from '#src/routes/internal/sync-equalify';
 
@@ -68,7 +68,7 @@ h2.ad-section:first-of-type { margin-top: 0; }
     padding: 2px 4px 2px 10px; font-size: 12px; color: #4b5563;
 }
 .ad-metric-pill form { display: inline; }
-.ad-metric-pill button { background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 13px; padding: 0 5px; }
+.ad-metric-pill button { background: none; border: none; color: #6b7280; cursor: pointer; font-size: 13px; padding: 0 5px; }
 .ad-metric-pill button:hover { color: #C8102E; }
 .ad-pill-synced { border-color: #bfdbfe; background: #eff6ff; }
 
@@ -86,7 +86,7 @@ h2.ad-section:first-of-type { margin-top: 0; }
 .ad-log { font-size: 13px; color: #4b5563; }
 .ad-log li { padding: 6px 0; border-bottom: 1px solid #f1f5f9; list-style: none; }
 .ad-log ul { padding: 0; margin: 0; }
-.ad-log .ad-log-time { color: #9ca3af; font-size: 12px; }
+.ad-log .ad-log-time { color: #6b7280; font-size: 12px; }
 .ad-topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
 `;
 
@@ -209,7 +209,7 @@ export const AdminPage: FC<{
                                         {objective.title}{objective.upcoming ? ' (Upcoming)' : ''}
                                         {objective.hidden && <span class="ad-hidden-tag">Hidden</span>}
                                     </h3>
-                                    <p>{objective.subtitle} · {objective.metrics.length} metric{objective.metrics.length === 1 ? '' : 's'}</p>
+                                    <p>{renderSubtitle(objective.subtitle)} · {objective.metrics.length} metric{objective.metrics.length === 1 ? '' : 's'}</p>
                                     <div class="ad-metric-pills">
                                         {objective.metrics.map(metric => (
                                             <span class={`ad-metric-pill ${metric.source === 'equalify' ? 'ad-pill-synced' : ''} ${metric.hidden ? 'ad-is-hidden' : ''}`}>
@@ -274,7 +274,7 @@ export const AdminPage: FC<{
                                     ))}
                                 </ul>
                             ) : (
-                                <p style="color:#9ca3af;">No manual submissions yet. Values entered on <a href="/submit-stats" style="color:#C8102E;">Submit Stats</a> will appear here.</p>
+                                <p style="color:#6b7280;">No manual submissions yet. Values entered on <a href="/submit-stats" style="color:#C8102E;">Submit Stats</a> will appear here.</p>
                             )}
                         </div>
                     </>

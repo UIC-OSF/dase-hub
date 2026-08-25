@@ -171,8 +171,8 @@ export const AboutPage: FC = () => {
                     <div class="info-card">
                         <h3>Updates on releases</h3>
                         <p>
-                            A short progress update goes out on each meaningful update or release.
-                            Follow along on the <a href="/updates">Updates</a> page.
+                            A short progress update is shared with the team on each meaningful
+                            update or release.
                         </p>
                     </div>
                 </div>
@@ -224,14 +224,9 @@ export const AboutPage: FC = () => {
 
                 <h2 class="section-heading" style="margin-top:48px;">Who runs it</h2>
                 <p class="section-subheading">
-                    DASE Hub is maintained by the UIC Digital Accessibility team.
+                    DASE Hub is maintained by the{' '}
+                    <a href="https://accessibility.uic.edu" rel="noopener">UIC Digital Accessibility team</a>.
                 </p>
-                <ul class="roles-list">
-                    <li><strong>Responsible — Chris:</strong> builds and maintains the dashboard, triages requests, and maintains the roadmap.</li>
-                    <li><strong>Accountable — Blake:</strong> sets direction and priorities, and approves the roadmap.</li>
-                    <li><strong>Consulted — Jemma &amp; Stefin:</strong> advise on scope and priorities, and on how check-ins fit the team's meeting cadence.</li>
-                    <li><strong>Informed — Helen &amp; Trey:</strong> kept up to date on progress and releases.</li>
-                </ul>
             </div>
         </Layout>
     );

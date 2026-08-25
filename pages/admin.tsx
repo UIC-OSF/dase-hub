@@ -8,6 +8,7 @@ import {
     setObjectiveHidden, updateMetric, getRecentSubmissions, renderSubtitle, Objective, IntegrationState, Submission,
 } from '#src/utils/keyResults';
 import { syncEqualifyStats } from '#src/routes/internal/sync-equalify';
+import { syncReflowStats } from '#src/routes/internal/sync-reflow';
 
 const styles = `
 .ad-container { max-width: 960px; margin: 0 auto; padding: 40px 24px 64px; }
@@ -107,19 +108,63 @@ const STAT_LABELS: Record<string, string> = {
     scanned_pdfs_red: 'PDFs (RED)',
     audits_total: 'Audits',
     active_users: 'Active users',
+    documents_processed: 'Documents converted',
+    pages_processed: 'Pages converted',
+};
+
+const INTEGRATION_BLURBS: Record<string, string> = {
+    equalify: 'Live accessibility-scan stats via GraphQL',
+    reflow: 'Live PDF-conversion stats from the Iris service',
+};
+
+const IntegrationCard: FC<{ id: string; fallbackName: string; fallbackEndpoint: string; state: IntegrationState | null }> = ({ id, fallbackName, fallbackEndpoint, state }) => {
+    const dotClass = !state?.lastSyncAt ? 'never' : state.lastStatus === 'error' ? 'error' : '';
+    return (
+        <div class="ad-integration" style="margin-bottom:14px;">
+            <div class="ad-int-main">
+                <div class="ad-int-name">
+                    <span class={`ad-status-dot ${dotClass}`}></span>
+                    {state?.name || fallbackName}
+                </div>
+                <div class="ad-int-meta">
+                    {INTEGRATION_BLURBS[id] || 'External stats source'} · <code>{state?.endpoint || fallbackEndpoint}</code><br />
+                    Last sync: <strong>{timeAgo(state?.lastSyncAt)}</strong>
+                    {state?.syncCount ? ` · ${state.syncCount} total syncs` : ''}
+                    {' · '}Schedule: every 6 hours
+                    {state?.lastStatus === 'error' && state.lastError && (
+                        <><br /><span style="color:#C8102E;">Last error: {state.lastError}</span></>
+                    )}
+                </div>
+                {state?.lastStats && (
+                    <div class="ad-stats-row">
+                        {Object.entries(state.lastStats).map(([key, value]) => (
+                            <span class="ad-stat-chip">
+                                <strong>{value.toLocaleString('en-US')}</strong>
+                                {STAT_LABELS[key] || key}
+                            </span>
+                        ))}
+                    </div>
+                )}
+            </div>
+            <form method="post" action="/admin/sync">
+                <input type="hidden" name="integration" value={id} />
+                <button type="submit" class="ad-btn">Sync Now</button>
+            </form>
+        </div>
+    );
 };
 
 export const AdminPage: FC<{
     objectives: Objective[];
     equalify: IntegrationState | null;
+    reflow: IntegrationState | null;
     submissions: Submission[];
     authed: boolean;
     configured: boolean;
     notice?: string;
     error?: string;
-}> = ({ objectives, equalify, submissions, authed, configured, notice, error }) => {
+}> = ({ objectives, equalify, reflow, submissions, authed, configured, notice, error }) => {
     const user = getCurrentUser();
-    const dotClass = !equalify?.lastSyncAt ? 'never' : equalify.lastStatus === 'error' ? 'error' : '';
 
     return (
         <Layout title="Admin" styles={styles} user={user}>
@@ -158,36 +203,8 @@ export const AdminPage: FC<{
                         {error && <div class="ad-alert ad-alert-error">{error}</div>}
 
                         <h2 class="ad-section">Integrations</h2>
-                        <div class="ad-integration">
-                            <div class="ad-int-main">
-                                <div class="ad-int-name">
-                                    <span class={`ad-status-dot ${dotClass}`}></span>
-                                    Equalify
-                                </div>
-                                <div class="ad-int-meta">
-                                    Live accessibility-scan stats via GraphQL · <code>{equalify?.endpoint || 'https://graphql.equalifyapp.com/v1/graphql'}</code><br />
-                                    Last sync: <strong>{timeAgo(equalify?.lastSyncAt)}</strong>
-                                    {equalify?.syncCount ? ` · ${equalify.syncCount} total syncs` : ''}
-                                    {' · '}Schedule: every 6 hours
-                                    {equalify?.lastStatus === 'error' && equalify.lastError && (
-                                        <><br /><span style="color:#C8102E;">Last error: {equalify.lastError}</span></>
-                                    )}
-                                </div>
-                                {equalify?.lastStats && (
-                                    <div class="ad-stats-row">
-                                        {Object.entries(equalify.lastStats).map(([key, value]) => (
-                                            <span class="ad-stat-chip">
-                                                <strong>{value.toLocaleString('en-US')}</strong>
-                                                {STAT_LABELS[key] || key}
-                                            </span>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                            <form method="post" action="/admin/sync">
-                                <button type="submit" class="ad-btn">Sync Now</button>
-                            </form>
-                        </div>
+                        <IntegrationCard id="equalify" fallbackName="Equalify" fallbackEndpoint="https://graphql.equalifyapp.com/v1/graphql" state={equalify} />
+                        <IntegrationCard id="reflow" fallbackName="Equalify Reflow" fallbackEndpoint="https://iris.equalify.uic.edu/v1/stats" state={reflow} />
 
                         <h2 class="ad-section">Dashboard layout</h2>
                         {objectives.map((objective, i) => (
@@ -212,7 +229,7 @@ export const AdminPage: FC<{
                                     <p>{renderSubtitle(objective.subtitle)} · {objective.metrics.length} metric{objective.metrics.length === 1 ? '' : 's'}</p>
                                     <div class="ad-metric-pills">
                                         {objective.metrics.map(metric => (
-                                            <span class={`ad-metric-pill ${metric.source === 'equalify' ? 'ad-pill-synced' : ''} ${metric.hidden ? 'ad-is-hidden' : ''}`}>
+                                            <span class={`ad-metric-pill ${metric.source ? 'ad-pill-synced' : ''} ${metric.hidden ? 'ad-is-hidden' : ''}`}>
                                                 <form method="post" action="/admin/metric/toggle">
                                                     <input type="hidden" name="objective_id" value={objective.id} />
                                                     <input type="hidden" name="metric_id" value={metric.id} />
@@ -222,7 +239,7 @@ export const AdminPage: FC<{
                                                             aria-label={`Show ${metric.label} on the public dashboard`} />
                                                     </label>
                                                 </form>
-                                                {metric.source === 'equalify' ? '🔄 ' : ''}{metric.label}
+                                                {metric.source ? '🔄 ' : ''}{metric.label}
                                                 <form method="post" action="/admin/metric/delete" onsubmit={`return confirm('Remove metric \\'${metric.label.replace(/'/g, '')}\\' from the dashboard?')`}>
                                                     <input type="hidden" name="objective_id" value={objective.id} />
                                                     <input type="hidden" name="metric_id" value={metric.id} />
@@ -288,13 +305,14 @@ export const AdminPage: FC<{
 
 async function renderAdmin(c: Context, notice?: string, error?: string) {
     const authed = isAdminAuthed(c);
-    const [objectives, equalify, submissions] = authed
-        ? await Promise.all([getOrSeedObjectives(), getIntegration('equalify'), getRecentSubmissions()])
-        : [[], null, []] as const;
+    const [objectives, equalify, reflow, submissions] = authed
+        ? await Promise.all([getOrSeedObjectives(), getIntegration('equalify'), getIntegration('reflow'), getRecentSubmissions()])
+        : [[], null, null, []] as const;
     return c.html(
         <AdminPage
             objectives={objectives as Objective[]}
             equalify={equalify}
+            reflow={reflow}
             submissions={submissions as Submission[]}
             authed={authed}
             configured={isAdminConfigured()}
@@ -326,12 +344,15 @@ export async function adminLogoutHandler(c: Context) {
 
 export async function adminSyncHandler(c: Context) {
     if (!isAdminAuthed(c)) return c.redirect('/admin', 303);
-    const result = await syncEqualifyStats();
+    const body = await c.req.parseBody();
+    const which = String(body.integration || '');
+    const name = which === 'reflow' ? 'Reflow' : 'Equalify';
+    const result = which === 'reflow' ? await syncReflowStats() : await syncEqualifyStats();
     if (result.ok) {
         const n = result.updatedMetrics?.length || 0;
-        return c.redirect(`/admin?notice=${encodeURIComponent(`Synced from Equalify — ${n} metric${n === 1 ? '' : 's'} updated`)}`, 303);
+        return c.redirect(`/admin?notice=${encodeURIComponent(`Synced from ${name} — ${n} metric${n === 1 ? '' : 's'} updated`)}`, 303);
     }
-    return c.redirect(`/admin?error=${encodeURIComponent(`Sync failed: ${result.error}`)}`, 303);
+    return c.redirect(`/admin?error=${encodeURIComponent(`${name} sync failed: ${result.error}`)}`, 303);
 }
 
 export async function adminMoveHandler(c: Context) {

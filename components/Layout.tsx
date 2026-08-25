@@ -69,7 +69,6 @@ export const Nav: FC<{ user?: User; product?: string }> = ({ user, product }) =>
                         <a href="/">Home</a>
                         <a href="/about">About</a>
                         <a href="/key-results">Key Results</a>
-                        <a href="/updates">Updates</a>
                         <a href="/feedback">Feedback</a>
                         {user ? (
                             <>
@@ -95,7 +94,6 @@ export const Nav: FC<{ user?: User; product?: string }> = ({ user, product }) =>
                     <a href="/">Home</a>
                     <a href="/about">About</a>
                     <a href="/key-results">Key Results</a>
-                    <a href="/updates">Updates</a>
                     <a href="/feedback">Feedback</a>
                     {user ? (
                         <>
@@ -175,6 +173,13 @@ export const Footer: FC = () => {
                         <a href="https://www.uillinois.edu" rel="noopener">University of Illinois System</a>
                         <a href="https://illinois.edu" rel="noopener">Urbana-Champaign</a>
                         <a href="https://www.uis.edu" rel="noopener">Springfield</a>
+                    </div>
+
+                    <div class="footer-column">
+                        <h3>Our Team</h3>
+                        <a href="https://accessibility.uic.edu" rel="noopener">Digital Accessibility Team</a>
+                        <a href={config.equalifyHubUrl} rel="noopener">Equalify Hub</a>
+                        <a href={`https://github.com/${config.githubOrg}`} rel="noopener">GitHub</a>
                     </div>
                 </div>
             </div>

@@ -26,9 +26,9 @@ export interface Metric {
     currentValue: number;
     status: 'high' | 'med' | 'upcoming';
     ariaLabel?: string;
-    /** 'equalify' = value overwritten by the sync; absent/manual = form-edited */
-    source?: 'equalify';
-    /** Which synced stat feeds this metric, e.g. 'scanned_urls' */
+    /** Integration that overwrites this value on sync; absent/manual = form-edited */
+    source?: 'equalify' | 'reflow';
+    /** Which synced stat feeds this metric, e.g. 'scanned_urls' (scoped per source) */
     sourceKey?: string;
     /** Template for the synced display string; {value} is replaced with the formatted number */
     metricTemplate?: string;
@@ -233,6 +233,14 @@ const SEED: Objective[] = [
         metrics: [
             { id: 'audits', label: 'Audits', metric: 'Count: —', currentValue: 80, status: 'high', source: 'equalify', sourceKey: 'audits_total', metricTemplate: 'Count: {value}' },
             { id: 'active-users', label: 'UIC Users', metric: 'Users: —', currentValue: 35, status: 'med', source: 'equalify', sourceKey: 'active_users', metricTemplate: 'Users: {value}' },
+        ],
+    },
+    {
+        id: 'equalify-reflow', order: 7,
+        title: 'Equalify Reflow', subtitle: 'Live stats, synced from Reflow',
+        metrics: [
+            { id: 'documents', label: 'Documents Converted', metric: 'Count: —', currentValue: 50, status: 'high', source: 'reflow', sourceKey: 'documents_processed', metricTemplate: 'Count: {value}' },
+            { id: 'pages', label: 'Pages Converted', metric: 'Count: —', currentValue: 50, status: 'high', source: 'reflow', sourceKey: 'pages_processed', metricTemplate: 'Count: {value}' },
         ],
     },
     {

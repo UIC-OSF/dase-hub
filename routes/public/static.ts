@@ -21,8 +21,8 @@ export const robots = (c: Context) => {
 export const sitemap = (c: Context) => {
     const paths = [
         { path: '/', priority: '1.0', changefreq: 'daily' },
+        { path: '/key-results', priority: '0.9', changefreq: 'daily' },
         { path: '/about', priority: '0.9', changefreq: 'monthly' },
-        { path: '/updates', priority: '0.7', changefreq: 'weekly' },
         { path: '/feedback', priority: '0.6', changefreq: 'weekly' },
         { path: '/signup', priority: '0.6', changefreq: 'monthly' },
     ];

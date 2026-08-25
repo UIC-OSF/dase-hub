@@ -8,8 +8,6 @@ import { setEvent } from '#src/utils/event';
 
 // Migrated pages (JSX components)
 import { AboutPage } from '#src/pages/about';
-import { updatesHandler, updatesDocHandler } from '#src/pages/updates';
-import { reportsHandler, reportsDocHandler } from '#src/pages/reports';
 import { feedbackHandler, submitFeatureHandler, voteHandler, deleteFeatureHandler } from '#src/pages/feedback';
 import { signupHandler, signupSubmitHandler } from '#src/pages/signup';
 import { homeHandler } from '#src/pages/home';
@@ -21,6 +19,7 @@ import {
     adminObjectiveToggleHandler, adminMetricToggleHandler,
 } from '#src/pages/admin';
 import { syncEqualifyStats } from '#src/routes/internal/sync-equalify';
+import { syncReflowStats } from '#src/routes/internal/sync-reflow';
 
 // Route handlers (all native Hono now)
 import { github, githubPro, callback, logout } from '#src/routes/public/auth';
@@ -73,12 +72,12 @@ app.get('/logout', logout);
 // ============ MIGRATED ROUTES (Hono native JSX) ============
 app.get('/', homeHandler);
 app.get('/about', (c) => c.html(<AboutPage />));
-// Combined listing page (Monthly Reports + News + future Releases) lives at /updates
-app.get('/updates', reportsHandler);
-app.get('/updates/:slug', updatesDocHandler);
-// Individual report pages keep their /reports/:slug URLs (they map to <docsRepo>/reports/)
-app.get('/reports', (c) => c.redirect('/updates', 302));
-app.get('/reports/:slug', reportsDocHandler);
+// Updates content is Equalify news (from equalify-docs) — link out rather than host it here.
+// Restore local pages via pages/updates.tsx + pages/reports.tsx when a DASE docs repo exists.
+app.get('/updates', (c) => c.redirect(`${config.equalifyHubUrl}/updates`, 302));
+app.get('/updates/:slug', (c) => c.redirect(`${config.equalifyHubUrl}/updates/${c.req.param('slug')}`, 302));
+app.get('/reports', (c) => c.redirect(`${config.equalifyHubUrl}/updates`, 302));
+app.get('/reports/:slug', (c) => c.redirect(`${config.equalifyHubUrl}/reports/${c.req.param('slug')}`, 302));
 app.get('/roadmap', (c) => c.redirect('/about#roadmap', 302));
 // Equalify products live on the Equalify Hub — link out rather than host them here
 app.get('/dashboard', (c) => c.redirect(`${config.equalifyHubUrl}/dashboard`, 302));
@@ -151,11 +150,12 @@ app.get('/:owner/:repo/commit/:sha', commits);
 const honoHandler = handle(app);
 
 export const handler = async (event: any, context: any) => {
-    // Internal: sync Key Results stats from Equalify via EventBridge schedule or Lambda Test
-    // Event shape: { "sync": "equalify" }
+    // Internal: sync Key Results stats from all integrations via EventBridge schedule or Lambda Test
+    // Event shape: { "sync": "equalify" } (value kept for back-compat; any sync event runs everything)
     if (event.sync) {
-        const result = await syncEqualifyStats();
-        return { statusCode: result.ok ? 200 : 500, body: JSON.stringify(result, null, 2) };
+        const [equalify, reflow] = await Promise.all([syncEqualifyStats(), syncReflowStats()]);
+        const ok = equalify.ok && reflow.ok;
+        return { statusCode: ok ? 200 : 500, body: JSON.stringify({ equalify, reflow }, null, 2) };
     }
 
     // Internal: generate report via Lambda Test or EventBridge

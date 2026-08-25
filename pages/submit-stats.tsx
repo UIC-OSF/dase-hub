@@ -152,14 +152,14 @@ const PickerPage: FC<{ objectives: Objective[]; saved?: string; error?: string }
                                             {metric.label}
                                             {metric.hidden && !objective.hidden && <span class="ss-hidden-tag">Hidden</span>}
                                         </div>
-                                        {metric.updatedAt && metric.source !== 'equalify' && (
+                                        {metric.updatedAt && !metric.source && (
                                             <div class="ss-row-meta">
                                                 Last updated {timeAgo(metric.updatedAt)}{metric.updatedBy ? ` by ${metric.updatedBy}` : ''}
                                             </div>
                                         )}
                                     </div>
                                     <span class="ss-row-value">{metric.metric}</span>
-                                    {metric.source === 'equalify' ? (
+                                    {metric.source ? (
                                         <span class="ss-row-synced">🔄 Auto-synced</span>
                                     ) : (
                                         <a href={`/submit-stats/edit?objective=${objective.id}&metric=${metric.id}`} class="ss-btn">Update</a>
@@ -308,7 +308,7 @@ export async function submitStatsEditFormHandler(c: Context) {
     const objective = await getObjective(c.req.query('objective') || '');
     const metric = objective?.metrics.find(m => m.id === c.req.query('metric'));
     if (!objective || !metric) return c.redirect('/submit-stats?error=' + encodeURIComponent('Metric not found'), 303);
-    if (metric.source === 'equalify') return c.redirect('/submit-stats?error=' + encodeURIComponent('That metric is synced automatically from Equalify'), 303);
+    if (metric.source) return c.redirect('/submit-stats?error=' + encodeURIComponent('That metric is synced automatically by an integration'), 303);
     return c.html(<EditMetricPage objective={objective} metric={metric} defaultName={getCookie(c, NAME_COOKIE) || ''} />);
 }
 
@@ -331,8 +331,8 @@ export async function submitStatsUpdateHandler(c: Context) {
     if (!objective || !existing) {
         return c.redirect('/submit-stats?error=' + encodeURIComponent('Metric not found'), 303);
     }
-    if (existing.source === 'equalify') {
-        return c.redirect('/submit-stats?error=' + encodeURIComponent('That metric is synced automatically from Equalify'), 303);
+    if (existing.source) {
+        return c.redirect('/submit-stats?error=' + encodeURIComponent('That metric is synced automatically by an integration'), 303);
     }
 
     // Preferred path: number-only entry, rebuilt into the stored display format.

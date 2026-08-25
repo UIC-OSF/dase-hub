@@ -7,8 +7,6 @@ import { setEvent } from '#src/utils/event';
 
 // Migrated pages (JSX components)
 import { AboutPage } from '#src/pages/about';
-import { updatesHandler, updatesDocHandler } from '#src/pages/updates';
-import { reportsHandler, reportsDocHandler } from '#src/pages/reports';
 import { feedbackHandler, submitFeatureHandler, voteHandler, deleteFeatureHandler } from '#src/pages/feedback';
 import { signupHandler, signupSubmitHandler } from '#src/pages/signup';
 import { homeHandler } from '#src/pages/home';
@@ -75,10 +73,10 @@ app.get('/logout', logout);
 // ============ MIGRATED ROUTES (Hono native JSX) ============
 app.get('/', homeHandler);
 app.get('/about', (c) => c.html(<AboutPage />));
-app.get('/updates', reportsHandler);
-app.get('/updates/:slug', updatesDocHandler);
-app.get('/reports', (c) => c.redirect('/updates', 302));
-app.get('/reports/:slug', reportsDocHandler);
+app.get('/updates', (c) => c.redirect(`${config.equalifyHubUrl}/updates`, 302));
+app.get('/updates/:slug', (c) => c.redirect(`${config.equalifyHubUrl}/updates/${c.req.param('slug')}`, 302));
+app.get('/reports', (c) => c.redirect(`${config.equalifyHubUrl}/updates`, 302));
+app.get('/reports/:slug', (c) => c.redirect(`${config.equalifyHubUrl}/reports/${c.req.param('slug')}`, 302));
 app.get('/roadmap', (c) => c.redirect('/about#roadmap', 302));
 // Equalify products live on the Equalify Hub — link out rather than host them here
 app.get('/dashboard', (c) => c.redirect(`${config.equalifyHubUrl}/dashboard`, 302));

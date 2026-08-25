@@ -130,12 +130,12 @@ const MetricRow: FC<{ metric: Metric }> = ({ metric }) => (
         >
             <div class="kr-meter-fill" style={`width:${Math.max(0, Math.min(100, metric.currentValue))}%;`}></div>
         </div>
-        {metric.source === 'equalify' && (
+        {metric.source && (
             <span class="kr-source" title={metric.updatedAt ? `Synced ${timeAgo(metric.updatedAt)}` : undefined}>
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <path d="M21 2v6h-6M3 12a9 9 0 0 1 15-6.7L21 8M3 22v-6h6M21 12a9 9 0 0 1-15 6.7L3 16"/>
                 </svg>
-                Synced from Equalify{metric.updatedAt ? ` · ${timeAgo(metric.updatedAt)}` : ''}
+                Synced from {metric.source === 'reflow' ? 'Reflow' : 'Equalify'}{metric.updatedAt ? ` · ${timeAgo(metric.updatedAt)}` : ''}
             </span>
         )}
     </div>

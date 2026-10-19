@@ -69,6 +69,10 @@ All configuration is environment-driven (see [`utils/config.ts`](utils/config.ts
 | `EQUALIFY_HUB_URL` | `https://equalify.uic.edu` | Equalify Hub site, used for link-outs and the `/dashboard` & `/reflow` redirects. |
 | `EQUALIFY_APP_URL` | `https://app.equalify.uic.edu` | Equalify application, used as the default favicon source. |
 | `FAVICON_URL` | `{EQUALIFY_APP_URL}/favicon.ico` | Custom favicon URL. |
+| `EQUALIFY_GRAPHQL_URL` | `https://graphql.equalifyapp.com/v1/graphql` | Equalify's anonymous GraphQL API, the Key Results sync's required source. |
+| `EQUALIFY_PUBLIC_STATS_URL` | `https://api.equalifyapp.com/public/getPublicStats` | Equalify's public usage totals (registered / active users, departments served). |
+| `EQUALIFY_CLOUDWATCH_NAMESPACE` / `EQUALIFY_CLOUDWATCH_REGION` | `equalifyuic` / `us-east-2` | CloudWatch namespace holding Equalify's scanner metrics (pages scanned). |
+| `REFLOW_STATS_URL` | `https://iris.equalify.uic.edu/v1/stats` | Equalify Iris conversion counters. |
 | `ORG_LOGO_URL` | inline UIC logo | Custom logo URL. |
 | `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | _(empty)_ | GitHub OAuth credentials for the repo-browser sign-in. |
 
@@ -85,6 +89,7 @@ The app runs as a single AWS Lambda function fronted by a CloudFront distributio
   - Partition key `pk` (String), sort key `sk` (String)
   - TTL enabled on the `ttl` attribute (used to expire the GitHub response cache)
 - **A public entry point** — a CloudFront distribution or a Lambda Function URL.
+- **Lambda role permissions** — read/write on the table above, plus `cloudwatch:GetMetricStatistics` so the Key Results sync can read Equalify's scan-volume metrics (optional; the sync reports a warning and keeps the last value without it).
 
 The table is a single-table design holding several entity types (`GHCACHE`, `USER`, `VIEW`, `SEARCH`, `FEATURE`, `WAITLIST`), all keyed by `pk`/`sk`.
 

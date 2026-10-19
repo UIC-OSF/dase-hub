@@ -1,5 +1,5 @@
 /**
- * Equalify Reflow stats sync.
+ * Equalify Iris (formerly Reflow) stats sync.
  *
  * Pulls conversion counters from the Iris service's public stats endpoint and
  * writes them into any Key Results metric tagged { source: 'reflow', sourceKey }.
@@ -14,7 +14,7 @@
  *   documents_processed — sessions counted once ready_for_review (40-page PDF = 1)
  *   pages_processed     — distinct page images converted to accessible HTML
  */
-import { getObjectives, putObjective, getIntegration, putIntegration } from '#src/utils/keyResults';
+import { getObjectives, putObjective, getIntegration, putIntegration, SOURCE_DEFINITIONS } from '#src/utils/keyResults';
 
 const REFLOW_STATS_URL = process.env.REFLOW_STATS_URL || 'https://iris.equalify.uic.edu/v1/stats';
 
@@ -60,6 +60,11 @@ export async function syncReflowStats(): Promise<SyncResult> {
             let changed = false;
             for (const metric of objective.metrics) {
                 if (metric.source !== 'reflow' || !metric.sourceKey) continue;
+                const definition = SOURCE_DEFINITIONS[`reflow:${metric.sourceKey}`];
+                if (definition && metric.definition !== definition) {
+                    metric.definition = definition;
+                    changed = true;
+                }
                 const value = stats[metric.sourceKey];
                 if (value === undefined) continue;
                 metric.metric = (metric.metricTemplate || 'Count: {value}').replace('{value}', value.toLocaleString('en-US'));
@@ -84,7 +89,7 @@ export async function syncReflowStats(): Promise<SyncResult> {
 
         await putIntegration({
             id: 'reflow',
-            name: 'Equalify Reflow',
+            name: 'Equalify Iris',
             endpoint: REFLOW_STATS_URL,
             lastSyncAt: syncedAt,
             lastStatus: 'ok',
@@ -97,7 +102,7 @@ export async function syncReflowStats(): Promise<SyncResult> {
     } catch (err: any) {
         await putIntegration({
             id: 'reflow',
-            name: 'Equalify Reflow',
+            name: 'Equalify Iris',
             endpoint: REFLOW_STATS_URL,
             lastSyncAt: prior?.lastSyncAt,
             lastStatus: 'error',

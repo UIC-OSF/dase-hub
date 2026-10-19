@@ -107,7 +107,22 @@ const STAT_LABELS: Record<string, string> = {
     scanned_pdfs: 'PDFs (all)',
     scanned_pdfs_red: 'PDFs (RED)',
     audits_total: 'Audits',
-    active_users: 'Active users',
+    active_users: 'Audit owners',
+    registered_users: 'Registered users',
+    new_users_30d: 'New users (30d)',
+    active_users_30d: 'Active users (30d)',
+    units_served_30d: 'Departments (30d)',
+    sites_monitored_30d: 'UIC sites (30d)',
+    sites_total: 'UIC sites (ever)',
+    uic_urls: 'uic.edu URLs',
+    pages_scanned_30d: 'Pages scanned (30d)',
+    pages_per_day_30d: 'Pages / day (30d)',
+    html_scanned_30d: 'HTML scanned (30d)',
+    pdfs_scanned_30d: 'PDFs scanned (30d)',
+    rescan_delta_pct: 'Rescan change %',
+    rescan_audits: 'Rescanned audits',
+    rescan_issues_first: 'Rescan issues (first)',
+    rescan_issues_latest: 'Rescan issues (latest)',
     documents_processed: 'Documents converted',
     pages_processed: 'Pages converted',
 };
@@ -133,6 +148,9 @@ const IntegrationCard: FC<{ id: string; fallbackName: string; fallbackEndpoint: 
                     {' · '}Schedule: every 6 hours
                     {state?.lastStatus === 'error' && state.lastError && (
                         <><br /><span style="color:#C8102E;">Last error: {state.lastError}</span></>
+                    )}
+                    {state?.lastWarning && (
+                        <><br /><span style="color:#92400e;">Partial sync — {state.lastWarning}</span></>
                     )}
                 </div>
                 {state?.lastStats && (
@@ -204,7 +222,7 @@ export const AdminPage: FC<{
 
                         <h2 class="ad-section">Integrations</h2>
                         <IntegrationCard id="equalify" fallbackName="Equalify" fallbackEndpoint="https://graphql.equalifyapp.com/v1/graphql" state={equalify} />
-                        <IntegrationCard id="reflow" fallbackName="Equalify Reflow" fallbackEndpoint="https://iris.equalify.uic.edu/v1/stats" state={reflow} />
+                        <IntegrationCard id="reflow" fallbackName="Equalify Iris" fallbackEndpoint="https://iris.equalify.uic.edu/v1/stats" state={reflow} />
 
                         <h2 class="ad-section">Dashboard layout</h2>
                         {objectives.map((objective, i) => (
@@ -346,11 +364,13 @@ export async function adminSyncHandler(c: Context) {
     if (!isAdminAuthed(c)) return c.redirect('/admin', 303);
     const body = await c.req.parseBody();
     const which = String(body.integration || '');
-    const name = which === 'reflow' ? 'Reflow' : 'Equalify';
+    const name = which === 'reflow' ? 'Iris' : 'Equalify';
     const result = which === 'reflow' ? await syncReflowStats() : await syncEqualifyStats();
     if (result.ok) {
         const n = result.updatedMetrics?.length || 0;
-        return c.redirect(`/admin?notice=${encodeURIComponent(`Synced from ${name} — ${n} metric${n === 1 ? '' : 's'} updated`)}`, 303);
+        const warnings = (result as { warnings?: string[] }).warnings || [];
+        const partial = warnings.length ? ` (partial: ${warnings.join('; ')})` : '';
+        return c.redirect(`/admin?notice=${encodeURIComponent(`Synced from ${name} — ${n} metric${n === 1 ? '' : 's'} updated${partial}`)}`, 303);
     }
     return c.redirect(`/admin?error=${encodeURIComponent(`${name} sync failed: ${result.error}`)}`, 303);
 }

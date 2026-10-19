@@ -84,7 +84,11 @@ const styles = `
     padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 6px;
     font-size: 15px; font-family: inherit; color: #1f2937; background: #ffffff; box-sizing: border-box;
 }
-.ss-field input:focus { outline: none; border-color: #C8102E; }
+.ss-field input:focus, .ss-field textarea:focus { outline: none; border-color: #C8102E; }
+.ss-field textarea {
+    padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 6px;
+    font-size: 14px; font-family: inherit; color: #1f2937; background: #ffffff; box-sizing: border-box; resize: vertical;
+}
 .ss-number-wrap { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .ss-number-wrap .ss-affix { font-size: 15px; color: #4b5563; font-weight: 600; }
 .ss-number-wrap input { width: 160px; font-size: 18px; font-weight: 700; }
@@ -152,6 +156,7 @@ const PickerPage: FC<{ objectives: Objective[]; saved?: string; error?: string }
                                             {metric.label}
                                             {metric.hidden && !objective.hidden && <span class="ss-hidden-tag">Hidden</span>}
                                         </div>
+                                        {metric.definition && <div class="ss-row-meta">{metric.definition}</div>}
                                         {metric.updatedAt && !metric.source && (
                                             <div class="ss-row-meta">
                                                 Last updated {timeAgo(metric.updatedAt)}{metric.updatedBy ? ` by ${metric.updatedBy}` : ''}
@@ -222,6 +227,11 @@ const EditMetricPage: FC<{ objective: Objective; metric: Metric; defaultName: st
                         )}
 
                         <div class="ss-field">
+                            <label for="definition">What this counts — optional</label>
+                            <textarea id="definition" name="definition" maxlength={200} rows={2} style="width:100%;">{metric.definition || ''}</textarea>
+                            <div class="ss-hint">One plain-language sentence shown under the metric on the dashboard, e.g. "People trained in department sessions since Jan 2025."</div>
+                        </div>
+                        <div class="ss-field">
                             <label for="current_value">Progress bar fill — optional</label>
                             <input type="number" id="current_value" name="current_value" value={String(metric.currentValue)} min={0} max={100} style="width:120px;" />
                             <div class="ss-hint">0–100. How full the green bar under this metric looks. Leave as-is if unsure.</div>
@@ -261,6 +271,11 @@ const NewMetricPage: FC<{ objective: Objective; defaultName: string }> = ({ obje
                             <label for="metric_value">Value</label>
                             <input type="text" id="metric_value" name="metric_value" placeholder='e.g. "Total: 47 People" or "Count: 12"' required maxlength={60} style="width:100%;" />
                             <div class="ss-hint">Shown in the value badge. Next time, you'll only need to update the number.</div>
+                        </div>
+                        <div class="ss-field">
+                            <label for="definition">What this counts — optional</label>
+                            <textarea id="definition" name="definition" maxlength={200} rows={2} style="width:100%;"></textarea>
+                            <div class="ss-hint">One plain-language sentence shown under the metric on the dashboard, e.g. "People trained in department sessions since Jan 2025."</div>
                         </div>
                         <div class="ss-field">
                             <label for="current_value">Progress bar fill — optional</label>
@@ -357,18 +372,24 @@ export async function submitStatsUpdateHandler(c: Context) {
         ? existing.currentValue
         : Math.max(0, Math.min(100, parseInt(currentRaw, 10) || 0));
 
+    const definition = String(body.definition ?? '').trim().slice(0, 200);
+    const definitionChanged = definition !== (existing.definition || '');
     const oldDisplay = existing.metric;
     const now = new Date().toISOString();
     await updateMetric(objectiveId, metricId, {
         metric: newDisplay,
         currentValue,
+        definition: definition || undefined,
         updatedAt: now,
         updatedBy: submittedBy,
     });
+    const valueChange = `${existing.label}: "${oldDisplay}" → "${newDisplay}"`;
     await logSubmission({
         at: now, by: submittedBy, objectiveId,
         metricLabel: existing.label,
-        change: `${existing.label}: "${oldDisplay}" → "${newDisplay}"`,
+        change: oldDisplay === newDisplay && definitionChanged
+            ? `${existing.label}: definition updated`
+            : valueChange + (definitionChanged ? ' (definition updated)' : ''),
     });
     rememberName(c, submittedBy);
     return c.redirect('/submit-stats?saved=' + encodeURIComponent(`${existing.label} — ${oldDisplay} → ${newDisplay}`), 303);
@@ -389,9 +410,11 @@ export async function submitStatsAddHandler(c: Context) {
 
     const now = new Date().toISOString();
     const id = label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || `metric-${Date.now()}`;
+    const definition = String(body.definition ?? '').trim().slice(0, 200);
     const ok = await addMetric(objectiveId, {
         id, label, metric: metricValue, currentValue,
         status: 'med', updatedAt: now, updatedBy: submittedBy,
+        ...(definition ? { definition } : {}),
     });
     if (!ok) {
         return c.redirect('/submit-stats?error=' + encodeURIComponent('Objective not found'), 303);

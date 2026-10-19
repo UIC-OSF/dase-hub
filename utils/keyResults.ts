@@ -34,6 +34,8 @@ export interface Metric {
     metricTemplate?: string;
     /** Hidden metrics stay in the data (and keep syncing) but don't render publicly */
     hidden?: boolean;
+    /** One-line, plain-language "what this counts", shown under the metric. Synced metrics get theirs from SOURCE_DEFINITIONS. */
+    definition?: string;
     updatedAt?: string;
     updatedBy?: string;
 }
@@ -57,9 +59,37 @@ export interface IntegrationState {
     lastSyncAt?: string;
     lastStatus?: 'ok' | 'error';
     lastError?: string;
+    /** Optional sources that failed on an otherwise successful sync (e.g. CloudWatch unreachable) */
+    lastWarning?: string;
     lastStats?: Record<string, number>;
     syncCount?: number;
 }
+
+/**
+ * Plain-language definitions for every synced stat, keyed "<source>:<sourceKey>".
+ * Written onto the metric on each sync so the dashboard, Submit Stats, and the
+ * Equalify Account > Statistics tab all describe the same thing the same way.
+ */
+export const SOURCE_DEFINITIONS: Record<string, string> = {
+    'equalify:scanned_urls': 'Web addresses (pages and documents) currently tracked in Equalify audits, across all users.',
+    'equalify:scanned_html': 'Web pages (HTML) tracked in Equalify audits.',
+    'equalify:scanned_pdfs': 'PDF documents tracked in Equalify audits.',
+    'equalify:scanned_pdfs_red': 'PDFs tracked in audits of Red Multisite sites (audits named "RED").',
+    'equalify:audits_total': 'Audits (a site or document collection set up for scanning) created in Equalify.',
+    'equalify:active_users': 'Distinct UIC accounts that have created at least one audit.',
+    'equalify:registered_users': 'Accounts in Equalify (UIC SSO and invited users).',
+    'equalify:active_users_30d': 'Distinct accounts that signed in to Equalify in the last 30 days.',
+    'equalify:new_users_30d': 'Accounts created in the last 30 days.',
+    'equalify:units_served_30d': 'Distinct UIC departments (from SSO) with at least one sign-in in the last 30 days.',
+    'equalify:sites_monitored_30d': 'Distinct uic.edu websites with a completed Equalify scan in the last 30 days.',
+    'equalify:sites_total': 'Distinct uic.edu websites tracked in Equalify audits.',
+    'equalify:uic_urls': 'uic.edu pages and documents tracked in Equalify audits.',
+    'equalify:pages_scanned_30d': "Web pages and PDFs checked for accessibility issues by Equalify's scanners in the last 30 days (WCAG rules for pages, PDF/UA for documents).",
+    'equalify:pages_per_day_30d': 'Average web pages and PDFs scanned per day over the last 30 days.',
+    'equalify:rescan_delta_pct': 'Change in detected issues from first to latest scan, across sites rescanned with the identical set of pages. Detected, not confirmed fixed.',
+    'reflow:documents_processed': 'PDFs converted to accessible, tagged output by Equalify Iris (a 40-page PDF counts once).',
+    'reflow:pages_processed': 'Individual PDF pages converted to accessible HTML by Equalify Iris.',
+};
 
 export interface Submission {
     at: string;
@@ -153,6 +183,8 @@ export async function updateMetric(
     const metric = objective.metrics.find(m => m.id === metricId);
     if (!metric) return null;
     Object.assign(metric, patch);
+    // A patch value of undefined clears the field rather than storing an undefined attribute
+    for (const key of Object.keys(metric) as (keyof Metric)[]) if (metric[key] === undefined) delete metric[key];
     await putObjective(objective);
     return metric;
 }
@@ -216,7 +248,7 @@ export async function getRecentSubmissions(limit: number = 15): Promise<Submissi
 
 // ── Seed (Jemma's prototype data, Equalify-fed metrics tagged for sync) ───────
 
-const SEED: Objective[] = [
+export const SEED_OBJECTIVES: Objective[] = [
     {
         id: 'equalify-scanning', order: 5,
         title: 'Equalify Scanning', subtitle: 'Live stats, synced from Equalify',
@@ -229,18 +261,33 @@ const SEED: Objective[] = [
     },
     {
         id: 'equalify-usage', order: 6,
-        title: 'Equalify Audits & Users', subtitle: 'Live stats, synced from Equalify',
+        title: 'Equalify Users & Audits', subtitle: 'Live stats, synced from Equalify',
         metrics: [
+            { id: 'registered-users', label: 'Registered users', metric: 'Users: —', currentValue: 60, status: 'high', source: 'equalify', sourceKey: 'registered_users', metricTemplate: 'Users: {value}' },
+            { id: 'active-users-30d', label: 'Active users (30 days)', metric: 'Users: —', currentValue: 50, status: 'med', source: 'equalify', sourceKey: 'active_users_30d', metricTemplate: 'Users: {value}' },
+            { id: 'units-served-30d', label: 'Departments served (30 days)', metric: 'Count: —', currentValue: 50, status: 'med', source: 'equalify', sourceKey: 'units_served_30d', metricTemplate: 'Count: {value}' },
+            { id: 'active-users', label: "Users who've created an audit", metric: 'Users: —', currentValue: 35, status: 'med', source: 'equalify', sourceKey: 'active_users', metricTemplate: 'Users: {value}' },
             { id: 'audits', label: 'Audits', metric: 'Count: —', currentValue: 80, status: 'high', source: 'equalify', sourceKey: 'audits_total', metricTemplate: 'Count: {value}' },
-            { id: 'active-users', label: 'UIC Users', metric: 'Users: —', currentValue: 35, status: 'med', source: 'equalify', sourceKey: 'active_users', metricTemplate: 'Users: {value}' },
         ],
     },
     {
         id: 'equalify-reflow', order: 7,
-        title: 'Equalify Reflow', subtitle: 'Live stats, synced from Reflow',
+        title: 'Equalify Iris', subtitle: 'Live stats, synced from Iris',
         metrics: [
             { id: 'documents', label: 'Documents Converted', metric: 'Count: —', currentValue: 50, status: 'high', source: 'reflow', sourceKey: 'documents_processed', metricTemplate: 'Count: {value}' },
             { id: 'pages', label: 'Pages Converted', metric: 'Count: —', currentValue: 50, status: 'high', source: 'reflow', sourceKey: 'pages_processed', metricTemplate: 'Count: {value}' },
+        ],
+    },
+    {
+        // Coverage, detection, and improvement against the standard Title II requires (WCAG 2.1 AA).
+        // Deadline for public entities serving 50,000+ people, per DOJ's April 2026 interim final rule.
+        id: 'title-ii', order: 8,
+        title: 'ADA Title II Readiness', subtitle: 'WCAG 2.1 AA · Deadline Apr 26, 2027',
+        metrics: [
+            { id: 'sites-monitored', label: 'Websites monitored (30 days)', metric: 'Count: —', currentValue: 80, status: 'high', source: 'equalify', sourceKey: 'sites_monitored_30d', metricTemplate: 'Count: {value}' },
+            { id: 'pages-scanned-30d', label: 'Pages scanned (30 days)', metric: 'Count: —', currentValue: 90, status: 'high', source: 'equalify', sourceKey: 'pages_scanned_30d', metricTemplate: 'Count: {value}' },
+            { id: 'uic-urls', label: 'UIC web addresses tracked', metric: 'Count: —', currentValue: 85, status: 'high', source: 'equalify', sourceKey: 'uic_urls', metricTemplate: 'Count: {value}' },
+            { id: 'rescan-delta', label: 'Detected issues on rescanned sites', metric: 'Change: —', currentValue: 25, status: 'med', source: 'equalify', sourceKey: 'rescan_delta_pct', metricTemplate: '{value}%' },
         ],
     },
     {
@@ -325,6 +372,6 @@ const SEED: Objective[] = [
 export async function getOrSeedObjectives(): Promise<Objective[]> {
     const existing = await getObjectives();
     if (existing.length > 0) return existing;
-    await Promise.all(SEED.map(o => putObjective(o)));
-    return SEED.slice().sort((a, b) => a.order - b.order);
+    await Promise.all(SEED_OBJECTIVES.map(o => putObjective(o)));
+    return SEED_OBJECTIVES.slice().sort((a, b) => a.order - b.order);
 }

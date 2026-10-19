@@ -18,9 +18,12 @@
   },
   "type": "module",
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild"]
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   },
   "devDependencies": {
+    "@aws-sdk/client-cloudwatch": "^3.1151.0",
     "@aws-sdk/client-dynamodb": "^3.1018.0",
     "@aws-sdk/lib-dynamodb": "^3.1018.0",
     "@hono/node-server": "^1.19.11",

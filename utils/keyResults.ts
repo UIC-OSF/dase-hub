@@ -36,6 +36,8 @@ export interface Metric {
     hidden?: boolean;
     /** One-line, plain-language "what this counts", shown under the metric. Synced metrics get theirs from SOURCE_DEFINITIONS. */
     definition?: string;
+    /** Optional goal. When set, the progress meter is value ÷ target, computed on every update and sync. */
+    target?: number;
     updatedAt?: string;
     updatedBy?: string;
 }
@@ -103,6 +105,33 @@ export interface Submission {
 export function renderSubtitle(subtitle: string): string {
     const now = new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'America/Chicago' });
     return subtitle.replace(/\{today\}/g, now);
+}
+
+/**
+ * Split a display value like "Total: 912 People" into prefix/number/suffix so
+ * forms can ask for just the number. Returns null when there's no number
+ * (e.g. "Upcoming") — those fall back to a free-text field.
+ */
+export function parseDisplayValue(display: string): { prefix: string; value: number; suffix: string } | null {
+    const match = display.match(/^(.*?)([\d,]+(?:\.\d+)?)(.*)$/);
+    if (!match) return null;
+    const value = Number(match[2].replace(/,/g, ''));
+    if (Number.isNaN(value)) return null;
+    return { prefix: match[1], value, suffix: match[3] };
+}
+
+/** Progress toward the goal as 0–100, or null when the metric has no goal or no numeric value. */
+export function targetProgress(metric: Metric): number | null {
+    if (!metric.target || metric.target <= 0) return null;
+    const parsed = parseDisplayValue(metric.metric);
+    if (!parsed) return null;
+    return Math.max(0, Math.min(100, Math.round((parsed.value / metric.target) * 100)));
+}
+
+/** A metric with a goal gets its meter from the value, never from a hand-set fill. */
+export function applyTarget(metric: Metric): void {
+    const progress = targetProgress(metric);
+    if (progress !== null) metric.currentValue = progress;
 }
 
 // ── Objectives ────────────────────────────────────────────────────────────────
@@ -185,6 +214,7 @@ export async function updateMetric(
     Object.assign(metric, patch);
     // A patch value of undefined clears the field rather than storing an undefined attribute
     for (const key of Object.keys(metric) as (keyof Metric)[]) if (metric[key] === undefined) delete metric[key];
+    applyTarget(metric);
     await putObjective(objective);
     return metric;
 }
@@ -192,6 +222,7 @@ export async function updateMetric(
 export async function addMetric(objectiveId: string, metric: Metric): Promise<boolean> {
     const objective = await getObjective(objectiveId);
     if (!objective) return false;
+    applyTarget(metric);
     objective.metrics.push(metric);
     await putObjective(objective);
     return true;

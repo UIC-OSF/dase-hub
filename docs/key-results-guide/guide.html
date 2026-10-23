@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DASE Hub — Key Results Guide</title>
+<style>
+  @page { size: letter; margin: 0.7in 0.7in 0.8in; }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  :root { --navy: #001e62; --red: #C8102E; --ink: #1f2937; --muted: #4b5563; --line: #e2e8f0; --panel: #f8f9fa; --green: #2e7d32; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif; color: var(--ink); font-size: 10.5pt; line-height: 1.45; }
+  h1, h2, h3 { color: var(--navy); line-height: 1.2; margin: 0; }
+  h1 { font-size: 28pt; font-weight: 800; letter-spacing: -0.01em; }
+  h2 { font-size: 18pt; font-weight: 800; margin: 0 0 10pt; padding-top: 4pt; }
+  h3 { font-size: 12.5pt; font-weight: 700; margin: 14pt 0 4pt; }
+  p { margin: 0 0 8pt; }
+  a { color: var(--red); text-decoration: none; }
+  code { font-family: Menlo, Consolas, monospace; font-size: 10pt; background: #f1f5f9; padding: 1px 5px; border-radius: 4px; }
+  .muted { color: var(--muted); }
+  .small { font-size: 9.5pt; }
+
+  /* Cover */
+  .cover { page-break-after: always; display: flex; flex-direction: column; height: 9.2in; overflow: hidden; }
+  .brand { display: flex; align-items: center; gap: 14pt; padding-bottom: 14pt; border-bottom: 4px solid var(--red); }
+  .brand img { width: 54pt; height: 54pt; }
+  .brand .wordmark { font-size: 15pt; font-weight: 700; color: var(--navy); }
+  .brand .sub { font-size: 10pt; color: var(--muted); }
+  .cover-body { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 14pt; }
+  .eyebrow { font-size: 10pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--red); }
+  .lede { font-size: 13.5pt; color: var(--muted); max-width: 32em; }
+  .cover-meta { font-size: 10pt; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10pt; display: flex; justify-content: space-between; }
+  .hero { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .hero { width: fit-content; max-width: 100%; }
+  .hero img { display: block; width: auto; max-width: 100%; max-height: 4.4in; }
+
+  /* Sections */
+  section { page-break-before: auto; margin-top: 18pt; }
+  section.first { page-break-before: always; margin-top: 0; }
+  h2, h3 { break-after: avoid; page-break-after: avoid; }
+  .steps li { break-inside: avoid; }
+  .footer-note { break-before: avoid; }
+  .keep { break-inside: avoid; page-break-inside: avoid; }
+  .steps { counter-reset: step; list-style: none; padding: 0; margin: 0 0 10pt; }
+  .steps li { position: relative; padding-left: 28pt; margin: 0 0 5pt; }
+  .steps li::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 1pt; width: 19pt; height: 19pt; border-radius: 50%; background: var(--red); color: #fff; font-weight: 700; font-size: 10pt; text-align: center; line-height: 19pt; }
+  figure { margin: 6pt 0 10pt; page-break-inside: avoid; }
+  figure img { display: block; width: auto; max-width: 100%; max-height: 3.9in; border: 1px solid var(--line); border-radius: 6px; }
+  figure.tall img { max-height: 3.8in; }
+  .signin { break-before: page; page-break-before: always; }
+  .two figure img { max-height: 2.0in; }
+  figure.split img { display: inline-block; vertical-align: top; width: 48.6%; height: auto; max-height: none; margin-right: 2.4%; }
+  figure.split img + img { margin-right: 0; }
+  figure.short img { max-height: 3.2in; }
+  figcaption { font-size: 9.5pt; color: var(--muted); margin-top: 5pt; }
+  .callout { border-left: 4px solid var(--navy); background: var(--panel); border-radius: 0 6px 6px 0; padding: 8pt 12pt; margin: 8pt 0 12pt; page-break-inside: avoid; }
+  .callout.red { border-left-color: var(--red); }
+  .callout strong { color: var(--navy); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14pt; align-items: start; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 9.6pt; margin: 6pt 0 10pt; }
+  th, td { text-align: left; vertical-align: top; padding: 4.5pt 7pt; border-bottom: 1px solid var(--line); }
+  th { background: var(--navy); color: #fff; font-weight: 700; font-size: 10pt; }
+  tr { page-break-inside: avoid; }
+  td:first-child { font-weight: 600; color: var(--navy); }
+  .pill { display: inline-block; font-size: 9pt; font-weight: 700; padding: 1px 7px; border-radius: 999px; background: #fef3c7; color: #92400e; }
+  .pill.green { background: #e8f5e9; color: var(--green); }
+  .pill.blue { background: #eff6ff; color: #1d4ed8; }
+  .footer-note { margin-top: 10pt; padding-top: 8pt; border-top: 1px solid var(--line); font-size: 10pt; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="brand">
+    <img src="logo.png" alt="UIC">
+    <div><div class="wordmark">DASE Hub</div><div class="sub">UIC Digital Accessibility Services &amp; Engineering</div></div>
+  </div>
+  <div class="cover-body">
+    <div>
+      <div class="eyebrow">Team guide</div>
+      <h1>Key Results Guide</h1>
+    </div>
+    <p class="lede">How to update the numbers on the DASE Hub dashboard, add new metrics, and control what's shown — written for Helen and Michael.</p>
+    <div class="hero"><img src="hero.png" alt="The Key Results dashboard at dase.uic.edu/key-results"></div>
+  </div>
+  <div class="cover-meta"><span>October 2026 · Version 1</span><span>Questions: Chris Aitken · caitken@uic.edu</span></div>
+</div>
+
+<section class="first">
+  <h2>At a glance</h2>
+  <p>The dashboard lives at <a href="https://dase.uic.edu/key-results">dase.uic.edu/key-results</a>. Two pages control it, both opened with the DASE team passcode:</p>
+  <table>
+    <tr><th style="width:34%">I want to…</th><th style="width:26%">Go to</th><th>What to do</th></tr>
+    <tr><td>Update a number</td><td>dase.uic.edu/submit-stats</td><td>Pick the metric → <strong>Update</strong> → type the new number → <strong>Save Update</strong></td></tr>
+    <tr><td>Explain what a number counts</td><td>Submit Stats → Update</td><td>Fill in <strong>What this counts</strong>; it appears under the metric</td></tr>
+    <tr><td>Set a goal for a metric</td><td>Submit Stats → Update</td><td>Type the goal in <strong>Goal</strong>; the green bar and a "Goal: … · % there" line follow automatically</td></tr>
+    <tr><td>Change the unit or wording around a number (e.g. Hours → Sessions)</td><td>Submit Stats → Update</td><td>Open <strong>Change the wording around the number</strong>, edit the text before/after it, save</td></tr>
+    <tr><td>Rename a KPI</td><td>Submit Stats → Update (or <strong>Rename / goal</strong> on auto-synced rows)</td><td>Change <strong>Metric name</strong> and save</td></tr>
+    <tr><td>Add a new metric to a category</td><td>Submit Stats → <strong>+ Add a metric</strong></td><td>Name, value (e.g. "Total: 47 People"), optional goal, your name</td></tr>
+    <tr><td>Show or hide a metric or category</td><td>dase.uic.edu/admin → Dashboard layout</td><td>Tick or untick the checkbox</td></tr>
+    <tr><td>Reorder categories</td><td>Admin → ▲ ▼ buttons</td><td>Moves the card up or down the dashboard</td></tr>
+    <tr><td>Add a category (with its date range)</td><td>Admin → Add Objective</td><td>Title + date range, then add metrics on Submit Stats</td></tr>
+    <tr><td>Rename a category or change its date range</td><td>Admin → <strong>Edit name &amp; dates</strong></td><td>Under the category, change the title or date range and press <strong>Save</strong></td></tr>
+    <tr><td>Refresh the Equalify / Iris numbers</td><td>Admin → <strong>Sync Now</strong></td><td>Otherwise they refresh on their own every 6 hours</td></tr>
+  </table>
+
+  <div class="signin">
+  <h3 style="margin-top:0">Signing in</h3>
+  <ol class="steps">
+    <li>Open <a href="https://dase.uic.edu/submit-stats">dase.uic.edu/submit-stats</a> (or <a href="https://dase.uic.edu/admin">/admin</a>).</li>
+    <li>Enter the <strong>DASE team passcode</strong> and press <strong>Continue</strong>. It's the same passcode for both pages, and the browser remembers it for 30 days.</li>
+  </ol>
+  <div class="two">
+    <figure><img src="c-gate.png" alt="The passcode prompt on Submit Stats"><figcaption>The passcode prompt. Ask Chris if you need the passcode.</figcaption></figure>
+    <div class="callout red" style="margin-top:8pt"><strong>If the browser asks for a username and password first,</strong> that's the site's preview login (dase.uic.edu is still in preview). It's separate from the team passcode — use the preview login Chris shared, then the passcode.</div>
+  </div>
+  </div>
+</section>
+
+<section>
+  <h2>Update a number</h2>
+  <ol class="steps">
+    <li>On <strong>Submit Stats</strong>, scroll to the category (for example <em>Deliver Comprehensive Accessibility Training</em>). Each row shows the metric, what it counts, and the value currently on the dashboard.</li>
+    <li>Press <strong>Update</strong> on the metric you want to change.</li>
+    <li>Type the new number. Only the number changes — the words around it ("Total: … People") stay the same, unless you open <strong>Change the wording around the number</strong> to edit them (for example Hours → Sessions).</li>
+    <li>Optionally rename it (<strong>Metric name</strong>), reword <strong>What this counts</strong>, or set a <strong>Goal</strong> — the green bar then tracks progress toward the goal on its own (page 7).</li>
+    <li>Add <strong>your name</strong> and press <strong>Save Update</strong>. The dashboard updates immediately — no sync, no delay.</li>
+  </ol>
+  <figure class="tall"><img src="c-picker-manual.png" alt="Submit Stats showing manual metrics with Update buttons"><figcaption>Manually entered metrics have an <strong>Update</strong> button and show who last updated them.</figcaption></figure>
+  <figure class="split">
+    <img src="c-edit-top.png" alt="Top of the Update form: current value, metric name, new number"><img src="c-edit-bottom.png" alt="Bottom of the Update form: what this counts, goal, progress bar fill, your name, Save Update">
+    <figcaption>The Update form (top half left, bottom half right): name, number — with a link to change the wording around it — what it counts, goal, and your name. The current value is shown at the top so you can sanity-check before saving.</figcaption>
+  </figure>
+  <div class="keep">
+  <h3>Auto-synced numbers: rename or set a goal</h3>
+  <p>Metrics marked <strong>Auto-synced</strong> (Equalify scanning, users, Iris conversions, the ADA Title II card) get their value and definition from Equalify every 6 hours, so there's nothing to type in. You can still <strong>rename</strong> them or give them a <strong>goal</strong>: press <strong>Rename / goal</strong> on the row.</p>
+  <div class="two">
+    <figure><img src="c-picker-synced.png" alt="Auto-synced rows with a Rename / goal link"><figcaption>Auto-synced rows show <strong>Rename / goal</strong> instead of Update.</figcaption></figure>
+    <figure><img src="c-edit-synced.png" alt="The rename form for an auto-synced metric"><figcaption>The form for an auto-synced metric: name and goal only.</figcaption></figure>
+  </div>
+  </div>
+</section>
+
+<section>
+  <h2>Add a new metric</h2>
+  <p>Every category on Submit Stats ends with <strong>+ Add a metric to this objective</strong>. Use it when you start tracking something new.</p>
+  <ol class="steps">
+    <li>Press <strong>+ Add a metric to this objective</strong> under the right category.</li>
+    <li><strong>Metric name</strong> — what appears on the dashboard, e.g. <em>Annual Workshop Attendees</em>.</li>
+    <li><strong>Value</strong> — the full badge text, e.g. <code>Total: 47 People</code> or <code>Count: 12</code>. Keep the pattern <em>label: number unit</em>; next time you'll only have to type the number.</li>
+    <li><strong>Goal</strong> (optional) — e.g. <code>1500</code>; the bar tracks progress toward it automatically.</li>
+    <li><strong>What this counts</strong> — one plain sentence. Directors read these, so say where the number comes from.</li>
+    <li><strong>Your name</strong>, then <strong>Add Metric</strong>.</li>
+  </ol>
+  <figure class="split">
+    <img src="c-new-top.png" alt="Top of the Add a metric form: metric name, value, goal"><img src="c-new-bottom.png" alt="Bottom of the Add a metric form: what this counts, progress bar fill, your name, Add Metric">
+    <figcaption>The Add a metric form (top half left, bottom half right), here under <em>Provide Consultation Services</em>.</figcaption>
+  </figure>
+  <div class="callout"><strong>Need a whole new category?</strong> Add it on the Admin page first (<em>Add Objective</em> — title and date range), then come back to Submit Stats to add its metrics.</div>
+</section>
+
+<section>
+  <h2>Show, hide, reorder and delete</h2>
+  <p>The <strong>Dashboard layout</strong> section of <a href="https://dase.uic.edu/admin">dase.uic.edu/admin</a> lists every category (card) and its metrics.</p>
+  <ul>
+    <li><strong>Hide or show a metric</strong> — untick or tick the checkbox next to its name. Hidden metrics keep their values (and keep syncing), they just don't appear publicly. Submit Stats marks them <span class="pill">Hidden</span>.</li>
+    <li><strong>Hide or show a whole category</strong> — the <strong>Shown</strong> checkbox on the right of the card. A category with no visible metrics also disappears on its own.</li>
+    <li><strong>Rename a category or change its date range</strong> — press <strong>Edit name &amp; dates</strong> under the category title, change the text, press <strong>Save</strong>.</li>
+    <li><strong>Reorder</strong> — the ▲ ▼ buttons move a card up or down the dashboard. Metrics inside a card appear in the order they were added; message Chris if you need them in a different order.</li>
+    <li><strong>Add a category</strong> — the <em>Add Objective</em> form at the bottom: a title and a date range (for example <code>Jan 2026 - {today}</code>, see page 7).</li>
+    <li><strong>Delete</strong> — the × on a metric or the <strong>Delete</strong> button on a card removes it permanently (you'll be asked to confirm). To take something off the dashboard temporarily, hide it instead.</li>
+  </ul>
+  <figure><img src="c-admin-layout.png" alt="The Dashboard layout section of the Admin page"><figcaption>Dashboard layout: <strong>Edit name &amp; dates</strong> (shown open on the first card), checkboxes to show or hide, ▲ ▼ to reorder, × and Delete to remove. Greyed-out cards are hidden.</figcaption></figure>
+</section>
+
+<section>
+  <h2>Date ranges and goals</h2>
+  <h3>Date ranges</h3>
+  <p>The line under each category title (for example <em>Jan 2025 - Oct 2026</em>) is the category's date range. Change it any time on the Admin page with <strong>Edit name &amp; dates</strong>. It accepts the token <code>{today}</code>, which always shows the current month — so <code>Jan 2025 - {today}</code> reads "Jan 2025 - Oct 2026" now and updates itself every month. Use a fixed range (<code>Feb 2026 - June 2026</code>) for a project with an end date.</p>
+
+  <h3>Goals and the progress bar</h3>
+  <p>Give any metric a <strong>Goal</strong> on its Update form (or on <strong>Rename / goal</strong> for auto-synced ones). Once a goal is set:</p>
+  <ul>
+    <li>the green bar shows <strong>current value ÷ goal</strong> automatically — 1,017 attendees against a goal of 1,500 fills the bar to 68% — and keeps itself up to date as the number changes;</li>
+    <li>the dashboard shows a line under the metric: <em>Goal: 1,500 · 68% there</em>;</li>
+    <li>the hand-set <em>Progress bar fill</em> no longer applies. Clear the Goal box to go back to setting the bar by hand.</li>
+  </ul>
+  <div class="callout"><strong>Pick goals you'd be happy to see on the public dashboard</strong> — the goal number is visible to everyone, not just the team.</div>
+
+</section>
+
+<section>
+  <h2>Numbers that update themselves</h2>
+  <p>Four cards are fed by integrations rather than by hand: <strong>Equalify Scanning</strong>, <strong>Equalify Users &amp; Audits</strong>, <strong>Equalify Iris</strong>, and <strong>ADA Title II Readiness</strong>. Each of their metrics shows <em>Synced from Equalify</em> (or <em>Iris</em>) and when it last refreshed.</p>
+  <ul>
+    <li>They refresh automatically <strong>every 6 hours</strong>.</li>
+    <li>To refresh right now (for example before a meeting), press <strong>Sync Now</strong> on the Admin page's <strong>Integrations</strong> cards.</li>
+    <li>Their definitions are fixed by the integration so they always match Equalify's own Account › Statistics page.</li>
+    <li>You can still <strong>rename</strong> them, give them a <strong>goal</strong>, <strong>hide</strong> any of them, or move the cards, exactly like manual metrics.</li>
+  </ul>
+  <figure class="short"><img src="c-admin-int.png" alt="The Integrations section of the Admin page with Sync Now buttons"><figcaption>Integrations: last sync time, the raw numbers pulled, and <strong>Sync Now</strong>.</figcaption></figure>
+
+  <h3>Good habits</h3>
+  <ul>
+    <li>Update manual numbers on a regular day each month, and always add your name. The dashboard shows totals, not history, so keep your own monthly log (the DAS spreadsheet works); the Admin page's <strong>Recent manual submissions</strong> list records who changed what, and when.</li>
+    <li>Keep "What this counts" in plain language — it's what directors see.</li>
+  </ul>
+  <p class="footer-note">Questions, or something the pages don't do yet: email <a href="mailto:caitken@uic.edu">caitken@uic.edu</a> or message Chris. · DASE Hub · dase.uic.edu · October 2026</p>
+</section>
+
+</body>
+</html>

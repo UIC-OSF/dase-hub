@@ -15,7 +15,7 @@ import { keyResultsHandler } from '#src/pages/key-results';
 import { submitStatsHandler, submitStatsUpdateHandler, submitStatsAddHandler, submitStatsEditFormHandler, submitStatsNewFormHandler } from '#src/pages/submit-stats';
 import {
     adminHandler, adminLoginHandler, adminLogoutHandler, adminSyncHandler,
-    adminMoveHandler, adminObjectiveAddHandler, adminObjectiveDeleteHandler, adminMetricDeleteHandler,
+    adminMoveHandler, adminObjectiveAddHandler, adminObjectiveUpdateHandler, adminObjectiveDeleteHandler, adminMetricDeleteHandler,
     adminObjectiveToggleHandler, adminMetricToggleHandler,
 } from '#src/pages/admin';
 import { syncEqualifyStats } from '#src/routes/internal/sync-equalify';
@@ -99,6 +99,7 @@ app.get('/admin/logout', adminLogoutHandler);
 app.post('/admin/sync', adminSyncHandler);
 app.post('/admin/move', adminMoveHandler);
 app.post('/admin/objective/add', adminObjectiveAddHandler);
+app.post('/admin/objective/update', adminObjectiveUpdateHandler);
 app.post('/admin/objective/delete', adminObjectiveDeleteHandler);
 app.post('/admin/objective/toggle', adminObjectiveToggleHandler);
 app.post('/admin/metric/delete', adminMetricDeleteHandler);

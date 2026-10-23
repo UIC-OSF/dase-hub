@@ -2,7 +2,7 @@ import type { FC } from 'hono/jsx';
 import type { Context } from 'hono';
 import { Layout } from '#src/components/Layout';
 import { getCurrentUser } from '#src/utils/auth';
-import { getOrSeedObjectives, visibleObjectives, renderSubtitle, Objective, Metric } from '#src/utils/keyResults';
+import { getOrSeedObjectives, visibleObjectives, renderSubtitle, targetProgress, Objective, Metric } from '#src/utils/keyResults';
 
 const styles = `
 .kr-container {
@@ -108,6 +108,7 @@ const styles = `
     margin: 5px 0 0;
     line-height: 1.45;
 }
+.kr-goal { font-size: 12px; font-weight: 600; color: #001e62; margin: 4px 0 0; }
 /* Trend chart (Title II card) */
 .kr-trend { margin: 0 0 18px; padding: 12px 12px 8px; background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 8px; }
 .kr-trend figcaption { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 4px; }
@@ -156,6 +157,7 @@ const MetricRow: FC<{ metric: Metric }> = ({ metric }) => (
             <div class="kr-meter-fill" style={`width:${Math.max(0, Math.min(100, metric.currentValue))}%;`}></div>
         </div>
         {metric.definition && <p class="kr-def">{metric.definition}</p>}
+        {metric.target ? <p class="kr-goal">Goal: {metric.target.toLocaleString('en-US')} · {targetProgress(metric) ?? 0}% there</p> : null}
         {metric.source && (
             <span class="kr-source" title={metric.updatedAt ? `Synced ${timeAgo(metric.updatedAt)}` : undefined}>
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">

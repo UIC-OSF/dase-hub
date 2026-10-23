@@ -14,7 +14,7 @@
  *   documents_processed — sessions counted once ready_for_review (40-page PDF = 1)
  *   pages_processed     — distinct page images converted to accessible HTML
  */
-import { getObjectives, putObjective, getIntegration, putIntegration, SOURCE_DEFINITIONS } from '#src/utils/keyResults';
+import { getObjectives, putObjective, getIntegration, putIntegration, applyTarget, SOURCE_DEFINITIONS } from '#src/utils/keyResults';
 
 const REFLOW_STATS_URL = process.env.REFLOW_STATS_URL || 'https://iris.equalify.uic.edu/v1/stats';
 
@@ -68,6 +68,7 @@ export async function syncReflowStats(): Promise<SyncResult> {
                 const value = stats[metric.sourceKey];
                 if (value === undefined) continue;
                 metric.metric = (metric.metricTemplate || 'Count: {value}').replace('{value}', value.toLocaleString('en-US'));
+                applyTarget(metric);
                 metric.updatedAt = syncedAt;
                 metric.updatedBy = 'reflow-sync';
                 updated.push(`${objective.id}/${metric.id}`);

@@ -28,7 +28,7 @@
  * the metric's progress meter (0–100) where a natural percentage exists.
  */
 import { CloudWatchClient, GetMetricStatisticsCommand } from '@aws-sdk/client-cloudwatch';
-import { getObjectives, putObjective, getIntegration, putIntegration, SOURCE_DEFINITIONS } from '#src/utils/keyResults';
+import { getObjectives, putObjective, getIntegration, putIntegration, applyTarget, SOURCE_DEFINITIONS } from '#src/utils/keyResults';
 
 const GRAPHQL_URL = process.env.EQUALIFY_GRAPHQL_URL || 'https://graphql.equalifyapp.com/v1/graphql';
 const PUBLIC_STATS_URL = process.env.EQUALIFY_PUBLIC_STATS_URL || 'https://api.equalifyapp.com/public/getPublicStats';
@@ -324,6 +324,7 @@ export async function syncEqualifyStats(): Promise<SyncResult> {
                 metric.metric = (metric.metricTemplate || 'Count: {value}').replace('{value}', formatStat(metric.sourceKey, value));
                 const fill = stats[`${metric.sourceKey}_fill`];
                 if (fill !== undefined) metric.currentValue = clamp(Math.round(fill), 0, 100);
+                applyTarget(metric);
                 metric.updatedAt = syncedAt;
                 metric.updatedBy = 'equalify-sync';
                 updated.push(`${objective.id}/${metric.id}`);

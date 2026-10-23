@@ -4,7 +4,7 @@ import { Layout } from '#src/components/Layout';
 import { getCurrentUser } from '#src/utils/auth';
 import { isAdminAuthed, isAdminConfigured, tryAdminLogin, adminLogout } from '#src/utils/adminAuth';
 import {
-    getOrSeedObjectives, getIntegration, moveObjective, putObjective, deleteObjective, deleteMetric,
+    getOrSeedObjectives, getObjective, getIntegration, moveObjective, putObjective, deleteObjective, deleteMetric,
     setObjectiveHidden, updateMetric, getRecentSubmissions, renderSubtitle, Objective, IntegrationState, Submission,
 } from '#src/utils/keyResults';
 import { syncEqualifyStats } from '#src/routes/internal/sync-equalify';
@@ -72,6 +72,13 @@ h2.ad-section:first-of-type { margin-top: 0; }
 .ad-metric-pill button { background: none; border: none; color: #6b7280; cursor: pointer; font-size: 13px; padding: 0 5px; }
 .ad-metric-pill button:hover { color: #C8102E; }
 .ad-pill-synced { border-color: #bfdbfe; background: #eff6ff; }
+
+/* Edit name & dates */
+.ad-edit { margin-top: 8px; }
+.ad-edit summary { font-size: 12px; font-weight: 600; color: #C8102E; cursor: pointer; width: fit-content; }
+.ad-edit-form { display: flex; gap: 10px; align-items: end; flex-wrap: wrap; margin-top: 8px; }
+.ad-edit-hint { font-size: 11px; color: #6b7280; margin: 6px 0 0; }
+.ad-edit-hint code { background: #f1f5f9; padding: 1px 5px; border-radius: 4px; font-size: 11px; }
 
 /* Visibility toggles */
 .ad-vis { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #4b5563; cursor: pointer; user-select: none; }
@@ -245,6 +252,22 @@ export const AdminPage: FC<{
                                         {objective.hidden && <span class="ad-hidden-tag">Hidden</span>}
                                     </h3>
                                     <p>{renderSubtitle(objective.subtitle)} · {objective.metrics.length} metric{objective.metrics.length === 1 ? '' : 's'}</p>
+                                    <details class="ad-edit">
+                                        <summary>Edit name &amp; dates</summary>
+                                        <form method="post" action="/admin/objective/update" class="ad-edit-form">
+                                            <input type="hidden" name="id" value={objective.id} />
+                                            <div class="ad-field" style="flex:2;min-width:200px;">
+                                                <label>Category title</label>
+                                                <input type="text" name="title" value={objective.title} required maxlength={90} style="width:100%;box-sizing:border-box;" />
+                                            </div>
+                                            <div class="ad-field" style="flex:1;min-width:160px;">
+                                                <label>Date range</label>
+                                                <input type="text" name="subtitle" value={objective.subtitle} maxlength={50} style="width:100%;box-sizing:border-box;" />
+                                            </div>
+                                            <button type="submit" class="ad-btn ad-btn-sm">Save</button>
+                                        </form>
+                                        <p class="ad-edit-hint">Tip: <code>{'{today}'}</code> always shows the current month — <code>{'Jan 2025 - {today}'}</code> reads "Jan 2025 - {renderSubtitle('{today}')}".</p>
+                                    </details>
                                     <div class="ad-metric-pills">
                                         {objective.metrics.map(metric => (
                                             <span class={`ad-metric-pill ${metric.source ? 'ad-pill-synced' : ''} ${metric.hidden ? 'ad-is-hidden' : ''}`}>
@@ -292,7 +315,7 @@ export const AdminPage: FC<{
                             </div>
                             <div class="ad-field" style="flex:1;min-width:160px;">
                                 <label>Date range</label>
-                                <input type="text" name="subtitle" placeholder="e.g. Feb 2026 - June 2026" maxlength={50} style="width:100%;box-sizing:border-box;" />
+                                <input type="text" name="subtitle" placeholder="e.g. Jan 2026 - {today}" maxlength={50} style="width:100%;box-sizing:border-box;" />
                             </div>
                             <button type="submit" class="ad-btn">Add Objective</button>
                         </form>
@@ -398,6 +421,21 @@ export async function adminObjectiveAddHandler(c: Context) {
     }
     await putObjective({ id, title, subtitle, order: maxOrder + 10, metrics: [] });
     return c.redirect(`/admin?notice=${encodeURIComponent(`Added "${title}" — add metrics via Submit Stats`)}`, 303);
+}
+
+export async function adminObjectiveUpdateHandler(c: Context) {
+    if (!isAdminAuthed(c)) return c.redirect('/admin', 303);
+    const body = await c.req.parseBody();
+    const id = String(body.id || '');
+    const title = String(body.title || '').trim().slice(0, 90);
+    const subtitle = String(body.subtitle || '').trim().slice(0, 50);
+    if (!id || !title) return c.redirect(`/admin?error=${encodeURIComponent('A category title is required')}`, 303);
+    const objective = await getObjective(id);
+    if (!objective) return c.redirect(`/admin?error=${encodeURIComponent('Category not found')}`, 303);
+    objective.title = title;
+    objective.subtitle = subtitle;
+    await putObjective(objective);
+    return c.redirect(`/admin?notice=${encodeURIComponent(`Saved "${title}"${subtitle ? ` · ${renderSubtitle(subtitle)}` : ''}`)}`, 303);
 }
 
 export async function adminObjectiveDeleteHandler(c: Context) {

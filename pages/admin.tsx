@@ -5,6 +5,7 @@ import { getCurrentUser } from '#src/utils/auth';
 import { isAdminAuthed, isAdminConfigured, tryAdminLogin, adminLogout } from '#src/utils/adminAuth';
 import {
     getOrSeedObjectives, getObjective, getIntegration, moveObjective, putObjective, deleteObjective, deleteMetric,
+    tabOf, isWide, isRanked, isTabId, TAB_LABELS, TabId,
     setObjectiveHidden, updateMetric, getRecentSubmissions, renderSubtitle, Objective, IntegrationState, Submission,
 } from '#src/utils/keyResults';
 import { syncEqualifyStats } from '#src/routes/internal/sync-equalify';
@@ -78,6 +79,9 @@ h2.ad-section:first-of-type { margin-top: 0; }
 .ad-edit summary { font-size: 12px; font-weight: 600; color: #C8102E; cursor: pointer; width: fit-content; }
 .ad-edit-form { display: flex; gap: 10px; align-items: end; flex-wrap: wrap; margin-top: 8px; }
 .ad-edit-hint { font-size: 11px; color: #6b7280; margin: 6px 0 0; }
+.ad-field select { padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; font-family: inherit; color: #1f2937; background: #fff; }
+.ad-check { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #1f2937; padding-bottom: 9px; }
+.ad-check input { accent-color: #C8102E; width: 15px; height: 15px; margin: 0; }
 .ad-edit-hint code { background: #f1f5f9; padding: 1px 5px; border-radius: 4px; font-size: 11px; }
 
 /* Visibility toggles */
@@ -251,9 +255,9 @@ export const AdminPage: FC<{
                                         {objective.title}{objective.upcoming ? ' (Upcoming)' : ''}
                                         {objective.hidden && <span class="ad-hidden-tag">Hidden</span>}
                                     </h3>
-                                    <p>{renderSubtitle(objective.subtitle)} · {objective.metrics.length} metric{objective.metrics.length === 1 ? '' : 's'}</p>
+                                    <p>{renderSubtitle(objective.subtitle)} · {objective.metrics.length} metric{objective.metrics.length === 1 ? '' : 's'} · Tab: {TAB_LABELS[tabOf(objective)]}{isWide(objective) ? ' · Full width' : ''}{isRanked(objective) ? ' · Ranked list' : ''}{objective.showsRelated ? ' · Also lists metrics flagged "Also show on" this tab' : ''}{objective.alsoOnTab ? ` · Also on the ${TAB_LABELS[objective.alsoOnTab]} tab` : ''}</p>
                                     <details class="ad-edit">
-                                        <summary>Edit name &amp; dates</summary>
+                                        <summary>Edit name, dates &amp; tab</summary>
                                         <form method="post" action="/admin/objective/update" class="ad-edit-form">
                                             <input type="hidden" name="id" value={objective.id} />
                                             <div class="ad-field" style="flex:2;min-width:200px;">
@@ -264,6 +268,31 @@ export const AdminPage: FC<{
                                                 <label>Date range</label>
                                                 <input type="text" name="subtitle" value={objective.subtitle} maxlength={50} style="width:100%;box-sizing:border-box;" />
                                             </div>
+                                            <div class="ad-field">
+                                                <label for={`tab-${objective.id}`}>Tab</label>
+                                                <select id={`tab-${objective.id}`} name="tab">
+                                                    {(Object.keys(TAB_LABELS) as TabId[]).map(tab => (
+                                                        <option value={tab} selected={tabOf(objective) === tab}>{TAB_LABELS[tab]}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div class="ad-field">
+                                                <label for={`also-${objective.id}`}>Also show on</label>
+                                                <select id={`also-${objective.id}`} name="also_on_tab">
+                                                    <option value="">No other tab</option>
+                                                    {(['title-ii', 'service', 'equalify'] as TabId[]).filter(tab => tab !== tabOf(objective)).map(tab => (
+                                                        <option value={tab} selected={objective.alsoOnTab === tab}>{TAB_LABELS[tab]}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <label class="ad-check">
+                                                <input type="checkbox" name="wide" value="1" checked={isWide(objective)} />
+                                                Full width
+                                            </label>
+                                            <label class="ad-check">
+                                                <input type="checkbox" name="ranked" value="1" checked={isRanked(objective)} />
+                                                Ranked list
+                                            </label>
                                             <button type="submit" class="ad-btn ad-btn-sm">Save</button>
                                         </form>
                                         <p class="ad-edit-hint">Tip: <code>{'{today}'}</code> always shows the current month — <code>{'Jan 2025 - {today}'}</code> reads "Jan 2025 - {renderSubtitle('{today}')}".</p>
@@ -316,6 +345,14 @@ export const AdminPage: FC<{
                             <div class="ad-field" style="flex:1;min-width:160px;">
                                 <label>Date range</label>
                                 <input type="text" name="subtitle" placeholder="e.g. Jan 2026 - {today}" maxlength={50} style="width:100%;box-sizing:border-box;" />
+                            </div>
+                            <div class="ad-field">
+                                <label for="new-objective-tab">Tab</label>
+                                <select id="new-objective-tab" name="tab">
+                                    {(Object.keys(TAB_LABELS) as TabId[]).map(tab => (
+                                        <option value={tab} selected={tab === 'service'}>{TAB_LABELS[tab]}</option>
+                                    ))}
+                                </select>
                             </div>
                             <button type="submit" class="ad-btn">Add Objective</button>
                         </form>
@@ -419,7 +456,8 @@ export async function adminObjectiveAddHandler(c: Context) {
     if (objectives.some(o => o.id === id)) {
         return c.redirect(`/admin?error=${encodeURIComponent('An objective with a similar title already exists')}`, 303);
     }
-    await putObjective({ id, title, subtitle, order: maxOrder + 10, metrics: [] });
+    const tabRaw = String(body.tab || '');
+    await putObjective({ id, title, subtitle, order: maxOrder + 10, metrics: [], tab: isTabId(tabRaw) ? tabRaw : 'service' });
     return c.redirect(`/admin?notice=${encodeURIComponent(`Added "${title}" — add metrics via Submit Stats`)}`, 303);
 }
 
@@ -434,6 +472,15 @@ export async function adminObjectiveUpdateHandler(c: Context) {
     if (!objective) return c.redirect(`/admin?error=${encodeURIComponent('Category not found')}`, 303);
     objective.title = title;
     objective.subtitle = subtitle;
+    const tabRaw = String(body.tab || '');
+    if (isTabId(tabRaw)) objective.tab = tabRaw;
+    if (body.tab !== undefined) {
+        objective.wide = String(body.wide || '') === '1';
+        objective.ranked = String(body.ranked || '') === '1';
+        const alsoRaw = String(body.also_on_tab || '');
+        if (isTabId(alsoRaw) && alsoRaw !== 'highlights' && alsoRaw !== tabOf(objective)) objective.alsoOnTab = alsoRaw;
+        else delete objective.alsoOnTab;
+    }
     await putObjective(objective);
     return c.redirect(`/admin?notice=${encodeURIComponent(`Saved "${title}"${subtitle ? ` · ${renderSubtitle(subtitle)}` : ''}`)}`, 303);
 }

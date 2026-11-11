@@ -38,13 +38,76 @@ export interface Metric {
     definition?: string;
     /** Optional goal. When set, the progress meter is value ÷ target, computed on every update and sync. */
     target?: number;
+    /** Earlier value to compare against (Highlights row): shows before/after bars and the % change. */
+    baseline?: number;
+    /** Labels for the two compared values, e.g. "FY25" and "FY26". */
+    baselineLabel?: string;
+    currentLabel?: string;
+    /** Also show this metric on another tab, in that tab's "related work" card, besides its own card. */
+    alsoOn?: TabId;
     updatedAt?: string;
     updatedBy?: string;
+}
+
+/**
+ * Key Results is split into tabs. Every objective (card) belongs to one; the
+ * special 'highlights' objective renders as stat tiles above the tabs.
+ */
+export type TabId = 'highlights' | 'title-ii' | 'service' | 'equalify';
+
+export const TAB_LABELS: Record<TabId, string> = {
+    'highlights': 'Highlights (above the tabs)',
+    'title-ii': 'ADA Title II',
+    'service': 'Engagement',
+    'equalify': 'Solutions',
+};
+
+export const isTabId = (value: string): value is TabId => Object.prototype.hasOwnProperty.call(TAB_LABELS, value);
+
+/** Where cards that predate tabs belong; anything else falls back on whether it's synced. */
+const DEFAULT_TABS: Record<string, TabId> = {
+    'highlights': 'highlights',
+    'title-ii': 'title-ii',
+    'equalify-reflow': 'title-ii',
+    'compliance': 'title-ii',
+    'equalify-scanning': 'equalify',
+    'equalify-usage': 'equalify',
+    'audit-assets': 'equalify',
+    'launch-equalify': 'equalify',
+    'ai-open-source': 'equalify',
+};
+
+const RANK_VALUE = /^\s*(No\.?|#)\s*\d+\s*$/i;
+
+/** "Top" lists, where every value is a rank like "No. 1", show as a ranked list unless set otherwise on /admin. */
+export function isRanked(objective: Objective): boolean {
+    if (objective.ranked !== undefined) return objective.ranked;
+    const shown = objective.metrics.filter(m => !m.hidden);
+    return shown.length > 0 && shown.every(m => RANK_VALUE.test(m.metric));
+}
+
+/** The ADA Title II card is wide unless someone turns it off on /admin. */
+export function isWide(objective: Objective): boolean {
+    return objective.wide ?? objective.id === 'title-ii';
+}
+
+export function tabOf(objective: Objective): TabId {
+    return objective.tab ?? DEFAULT_TABS[objective.id] ?? (objective.metrics.some(m => m.source) ? 'equalify' : 'service');
 }
 
 export interface Objective {
     id: string;
     title: string;
+    /** Which tab the card appears on; see tabOf() for the default. */
+    tab?: TabId;
+    /** Full-width card (spans the whole row); see isWide() for the default. */
+    wide?: boolean;
+    /** Ranked list (number first, no progress bars); see isRanked() for the default. */
+    ranked?: boolean;
+    /** Card with no metrics of its own: it lists metrics from other tabs flagged "also show on" this card's tab. */
+    showsRelated?: boolean;
+    /** Also show the whole card on another tab, after that tab's own cards (one card, edited in one place). */
+    alsoOnTab?: TabId;
     /** Date-range line under the title. May contain {today}, rendered as the current month at view time. */
     subtitle: string;
     order: number;
@@ -87,6 +150,7 @@ export const SOURCE_DEFINITIONS: Record<string, string> = {
     'equalify:sites_total': 'Distinct uic.edu websites tracked in Equalify audits.',
     'equalify:uic_urls': 'uic.edu pages and documents tracked in Equalify audits.',
     'equalify:pages_scanned_30d': "Web pages and PDFs checked for accessibility issues by Equalify's scanners in the last 30 days (WCAG rules for pages, PDF/UA for documents).",
+    'equalify:html_scanned_30d': "Web pages checked against WCAG rules by Equalify's scanners in the last 30 days.",
     'equalify:pages_per_day_30d': 'Average web pages and PDFs scanned per day over the last 30 days.',
     'equalify:rescan_delta_pct': 'Change in detected issues from first to latest scan, across sites rescanned with the identical set of pages. Detected, not confirmed fixed.',
     'reflow:documents_processed': 'PDFs converted to accessible, tagged output by Equalify Iris (a 40-page PDF counts once).',
@@ -198,7 +262,7 @@ export function visibleObjectives(objectives: Objective[]): Objective[] {
     return objectives
         .filter(o => !o.hidden)
         .map(o => ({ ...o, metrics: o.metrics.filter(m => !m.hidden) }))
-        .filter(o => o.metrics.length > 0);
+        .filter(o => o.metrics.length > 0 || o.showsRelated);
 }
 
 /** Update a single metric row inside an objective (read-modify-write). */

@@ -4,7 +4,7 @@ import { getCookie, setCookie } from 'hono/cookie';
 import { Layout } from '#src/components/Layout';
 import { getCurrentUser } from '#src/utils/auth';
 import { isAdminAuthed, isAdminConfigured } from '#src/utils/adminAuth';
-import { getOrSeedObjectives, getObjective, updateMetric, addMetric, logSubmission, renderSubtitle, parseDisplayValue, targetProgress, Objective, Metric } from '#src/utils/keyResults';
+import { getOrSeedObjectives, getObjective, updateMetric, addMetric, logSubmission, renderSubtitle, parseDisplayValue, targetProgress, tabOf, isTabId, TAB_LABELS, Objective, Metric, TabId } from '#src/utils/keyResults';
 
 const NAME_COOKIE = 'dase_name';
 
@@ -48,6 +48,13 @@ const styles = `
 .ss-link:hover { text-decoration: underline; }
 .ss-more { margin-top: 8px; }
 .ss-more summary { font-size: 13px; color: #C8102E; font-weight: 600; cursor: pointer; width: fit-content; }
+.ss-field select { padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px; font-family: inherit; color: #1f2937; background: #ffffff; }
+.ss-field select:focus { outline: none; border-color: #C8102E; }
+.ss-fieldset { border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px 14px; margin: 0 0 18px; }
+.ss-fieldset legend { font-size: 13px; font-weight: 600; color: #1f2937; padding: 0 4px; }
+.ss-compare-grid { display: flex; gap: 12px; flex-wrap: wrap; }
+.ss-compare-grid label { display: block; font-size: 12px; color: #4b5563; margin-bottom: 4px; font-weight: 500; }
+.ss-compare-grid input { width: 140px; font-size: 15px; }
 .ss-note { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 12px 16px; font-size: 14px; color: #1e3a8a; margin-bottom: 20px; line-height: 1.5; }
 .ss-hidden-tag { font-size: 11px; font-weight: 600; color: #92400e; background: #fef3c7; border-radius: 4px; padding: 1px 6px; margin-left: 6px; vertical-align: middle; }
 .ss-btn {
@@ -139,8 +146,11 @@ const PickerPage: FC<{ objectives: Objective[]; saved?: string; error?: string }
                 {objectives.map(objective => (
                     <section class="ss-group">
                         <h2>{objective.title}{objective.hidden && <span class="ss-hidden-tag">Hidden from dashboard</span>}</h2>
-                        <p class="ss-group-dates">{renderSubtitle(objective.subtitle)}</p>
-                        <div class="ss-rows">
+                        <p class="ss-group-dates">{renderSubtitle(objective.subtitle)} · Tab: {TAB_LABELS[tabOf(objective)]}{objective.alsoOnTab ? ` (also on ${TAB_LABELS[objective.alsoOnTab]})` : ''}</p>
+                        {objective.showsRelated && (
+                            <p class="ss-row-meta" style="margin:0 0 8px;">Besides its own metrics below, this card also lists metrics from other tabs that are set to "Also show on" the {TAB_LABELS[tabOf(objective)]} tab.</p>
+                        )}
+                        {objective.metrics.length > 0 && <div class="ss-rows">
                             {objective.metrics.map(metric => (
                                 <div class="ss-row">
                                     <div class="ss-row-main">
@@ -150,6 +160,7 @@ const PickerPage: FC<{ objectives: Objective[]; saved?: string; error?: string }
                                         </div>
                                         {metric.definition && <div class="ss-row-meta">{metric.definition}</div>}
                                         {metric.target ? <div class="ss-row-meta">Goal: {metric.target.toLocaleString('en-US')} · {targetProgress(metric) ?? 0}% there</div> : null}
+                                        {metric.alsoOn ? <div class="ss-row-meta">Also shown on the {TAB_LABELS[metric.alsoOn]} tab</div> : null}
                                         {metric.updatedAt && !metric.source && (
                                             <div class="ss-row-meta">
                                                 Last updated {timeAgo(metric.updatedAt)}{metric.updatedBy ? ` by ${metric.updatedBy}` : ''}
@@ -164,7 +175,7 @@ const PickerPage: FC<{ objectives: Objective[]; saved?: string; error?: string }
                                     )}
                                 </div>
                             ))}
-                        </div>
+                        </div>}
                         <a href={`/submit-stats/new?objective=${objective.id}`} class="ss-add-link">+ Add a metric to this objective</a>
                     </section>
                 ))}
@@ -181,6 +192,7 @@ const EditMetricPage: FC<{ objective: Objective; metric: Metric; defaultName: st
     const parsed = parseDisplayValue(metric.metric);
     const progress = targetProgress(metric);
     const sourceName = metric.source === 'reflow' ? 'Iris' : 'Equalify';
+    const ownTab = tabOf(objective);
     return (
         <Layout title={`${synced ? 'Rename' : 'Update'} ${metric.label}`} styles={styles} user={user}>
             <div class="ss-container">
@@ -260,6 +272,40 @@ const EditMetricPage: FC<{ objective: Objective; metric: Metric; defaultName: st
                             </div>
                             <div class="ss-hint">When a goal is set, the green bar shows progress toward it automatically and the goal appears on the dashboard. Leave blank for no goal.</div>
                         </div>
+
+                        {ownTab === 'highlights' && !synced && (
+                            <fieldset class="ss-fieldset">
+                                <legend>Compare with an earlier value — optional</legend>
+                                <div class="ss-compare-grid">
+                                    <div>
+                                        <label for="baseline">Earlier value</label>
+                                        <input type="number" id="baseline" name="baseline" value={metric.baseline ? String(metric.baseline) : ''} min={0} step="any" placeholder="e.g. 79" />
+                                    </div>
+                                    <div>
+                                        <label for="baseline_label">Earlier label</label>
+                                        <input type="text" id="baseline_label" name="baseline_label" value={metric.baselineLabel || ''} maxlength={20} placeholder="e.g. FY25" />
+                                    </div>
+                                    <div>
+                                        <label for="current_label">Current label</label>
+                                        <input type="text" id="current_label" name="current_label" value={metric.currentLabel || ''} maxlength={20} placeholder="e.g. FY26" />
+                                    </div>
+                                </div>
+                                <div class="ss-hint">Shows before/after bars and the % change on the Highlights row. Leave the earlier value blank to show just the number.</div>
+                            </fieldset>
+                        )}
+
+                        {ownTab !== 'highlights' && (
+                            <div class="ss-field">
+                                <label for="also_on">Also show on another tab — optional</label>
+                                <select id="also_on" name="also_on">
+                                    <option value="">No, only in this card</option>
+                                    {(['title-ii', 'service', 'equalify'] as TabId[]).filter(tab => tab !== ownTab).map(tab => (
+                                        <option value={tab} selected={metric.alsoOn === tab}>{TAB_LABELS[tab]}</option>
+                                    ))}
+                                </select>
+                                <div class="ss-hint">The metric stays in this card and also appears in a "related work" card on the tab you pick — for example, Title II work that also counts as engagement.</div>
+                            </div>
+                        )}
 
                         {!synced && !metric.target && (
                             <div class="ss-field">
@@ -400,6 +446,17 @@ export async function submitStatsUpdateHandler(c: Context) {
         changes.push(target === undefined ? 'goal removed' : `goal set to ${target.toLocaleString('en-US')}`);
     }
 
+    // "Also show on another tab" applies to every metric outside the Highlights row
+    const ownTab = tabOf(objective);
+    if (ownTab !== 'highlights' && body.also_on !== undefined) {
+        const raw = String(body.also_on).trim();
+        const alsoOn: TabId | undefined = raw && isTabId(raw) && raw !== ownTab && raw !== 'highlights' ? raw : undefined;
+        if (alsoOn !== existing.alsoOn) {
+            patch.alsoOn = alsoOn;
+            changes.push(alsoOn ? `also shown on the ${TAB_LABELS[alsoOn]} tab` : 'no longer shown on other tabs');
+        }
+    }
+
     // Value, definition and fill are hand-entered only for manual metrics;
     // synced ones get theirs from the integration.
     if (!synced) {
@@ -435,6 +492,21 @@ export async function submitStatsUpdateHandler(c: Context) {
         if (currentRaw !== '') {
             const fill = Math.max(0, Math.min(100, parseInt(currentRaw, 10) || 0));
             if (fill !== existing.currentValue) patch.currentValue = fill;
+        }
+
+        // Before/after comparison for Highlights tiles
+        if (ownTab === 'highlights' && body.baseline !== undefined) {
+            const baselineRaw = String(body.baseline).trim();
+            const baseline = baselineRaw === '' ? undefined : Number(baselineRaw);
+            if (baseline !== undefined && (!Number.isFinite(baseline) || baseline <= 0)) return fail('The earlier value must be a number greater than 0');
+            const baselineLabel = String(body.baseline_label ?? '').trim().slice(0, 20) || undefined;
+            const currentLabel = String(body.current_label ?? '').trim().slice(0, 20) || undefined;
+            if (baseline !== existing.baseline || baselineLabel !== existing.baselineLabel || currentLabel !== existing.currentLabel) {
+                patch.baseline = baseline;
+                patch.baselineLabel = baselineLabel;
+                patch.currentLabel = currentLabel;
+                changes.push(baseline === undefined ? 'comparison removed' : `compared with ${baselineLabel || 'earlier'} value ${baseline.toLocaleString('en-US')}`);
+            }
         }
         if (Object.keys(patch).length) {
             patch.updatedAt = new Date().toISOString();

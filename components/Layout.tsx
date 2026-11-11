@@ -151,7 +151,7 @@ export const Footer: FC = () => {
                 
                 <div class="footer-links">
                     <div class="footer-column">
-                        <h3>Resources</h3>
+                        <h2>Resources</h2>
                         <a href="https://catalog.uic.edu/ucat/academic-calendar/" rel="noopener">Academic Calendar</a>
                         <a href="https://library.uic.edu/" rel="noopener">Library</a>
                         <a href="https://maps.uic.edu/" rel="noopener">Maps</a>
@@ -160,7 +160,7 @@ export const Footer: FC = () => {
                     </div>
                     
                     <div class="footer-column">
-                        <h3>Quick Links</h3>
+                        <h2>Quick Links</h2>
                         <a href="https://it.uic.edu/support/" rel="noopener">Get Support</a>
                         <a href="https://uic.edu/about/job-opportunities" rel="noopener">Job Openings</a>
                         <a href="https://emergency.uic.edu/" rel="noopener">Emergency Information</a>
@@ -169,14 +169,14 @@ export const Footer: FC = () => {
                     </div>
                     
                     <div class="footer-column">
-                        <h3>University</h3>
+                        <h2>University</h2>
                         <a href="https://www.uillinois.edu" rel="noopener">University of Illinois System</a>
                         <a href="https://illinois.edu" rel="noopener">Urbana-Champaign</a>
                         <a href="https://www.uis.edu" rel="noopener">Springfield</a>
                     </div>
 
                     <div class="footer-column">
-                        <h3>Our Team</h3>
+                        <h2>Our Team</h2>
                         <a href="https://accessibility.uic.edu" rel="noopener">Digital Accessibility Team</a>
                         <a href={config.equalifyHubUrl} rel="noopener">Equalify Hub</a>
                         <a href={`https://github.com/${config.githubOrg}`} rel="noopener">GitHub</a>
@@ -404,7 +404,7 @@ nav .nav-links a.active {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 32px;
 }
-.footer-column h3 {
+.footer-column h2 {
     font-size: 14px;
     font-weight: 600;
     color: #001e62;

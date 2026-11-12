@@ -137,7 +137,7 @@ const PickerPage: FC<{ objectives: Objective[]; saved?: string; error?: string }
                 <h1>Submit Stats</h1>
                 <p class="ss-subtitle">
                     Pick the number you want to update — each one has its own short form.
-                    Changes appear on the <a href="/key-results" style="color:#C8102E;">Key Results</a> dashboard right away.
+                    Changes appear on the <a href="/key-results" style="color:#C8102E;">ADA Title II</a> and <a href="/okra" style="color:#C8102E;">OKRA</a> dashboards right away.
                 </p>
 
                 {saved && <div class="ss-alert ss-alert-success">✓ Saved: <span class="ss-change">{saved}</span></div>}
@@ -299,7 +299,7 @@ const EditMetricPage: FC<{ objective: Objective; metric: Metric; defaultName: st
                                 <label for="also_on">Also show on another tab — optional</label>
                                 <select id="also_on" name="also_on">
                                     <option value="">No, only in this card</option>
-                                    {(['title-ii', 'service', 'equalify'] as TabId[]).filter(tab => tab !== ownTab).map(tab => (
+                                    {(['title-ii', 'service', 'equalify', 'ai-leaders'] as TabId[]).filter(tab => tab !== ownTab).map(tab => (
                                         <option value={tab} selected={metric.alsoOn === tab}>{TAB_LABELS[tab]}</option>
                                     ))}
                                 </select>
@@ -384,7 +384,7 @@ function gate(c: Context, error?: string) {
         <Layout title="Submit Stats" styles={styles} user={user}>
             <div class="ss-container">
                 <h1>Submit Stats</h1>
-                <p class="ss-subtitle">Update the numbers on the Key Results dashboard.</p>
+                <p class="ss-subtitle">Update the numbers on the ADA Title II and OKRA dashboards.</p>
                 <PasscodeGate configured={isAdminConfigured()} error={error} />
             </div>
         </Layout>,

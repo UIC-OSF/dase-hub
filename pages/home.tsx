@@ -241,144 +241,110 @@ export const HomePage: FC = () => {
                 <div class="hero-content">
                     <h1>DASE Hub</h1>
                     <p>
-                        The central dashboard for UIC's Digital Accessibility team — one place to
-                        track projects, data, and progress across the work we do, driven by an
-                        agreed roadmap.
+                        The central dashboard for UIC Digital Accessibility Services and
+                        Engineering: one place to see our progress on ADA Title II, the rest of
+                        our work, our projects, and who does what.
                     </p>
                     <div class="hero-buttons">
                         <a href="/key-results" class="hero-btn hero-btn-primary">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                 <line x1="18" y1="20" x2="18" y2="10"/>
                                 <line x1="12" y1="20" x2="12" y2="4"/>
                                 <line x1="6" y1="20" x2="6" y2="14"/>
                             </svg>
-                            View Key Results
+                            View the ADA Title II Dashboard
                         </a>
-                        <a href="/signup" class="hero-btn hero-btn-secondary">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                                <circle cx="8.5" cy="7" r="4"/>
-                                <line x1="20" y1="8" x2="20" y2="14"/>
-                                <line x1="23" y1="11" x2="17" y2="11"/>
-                            </svg>
-                            Sign Up for Updates
+                        <a href="/okra" class="hero-btn hero-btn-secondary">
+                            View OKRA
                         </a>
                     </div>
                 </div>
             </section>
 
-            {/* Project Cards */}
+            {/* Section cards */}
             <section class="products-section">
-                <h2>Projects we track</h2>
+                <h2>What&rsquo;s in the Hub</h2>
                 <p class="section-desc">
-                    DASE Hub surfaces data and progress across the team's projects. Coverage is
-                    rolling out in phases — see the <a href="/about#roadmap">roadmap</a>.
+                    Numbers from Equalify update automatically several times a day. The team
+                    updates the rest.
                 </p>
                 <div class="products-grid">
+                    <a href="/key-results" class="product-card">
+                        <div class="product-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                        </div>
+                        <h3>ADA Title II Dashboard</h3>
+                        <p>
+                            Where UIC stands on the ADA Title II requirement: pages scanned, issues fixed on rescanned sites, PDF pages converted, and course content accessibility over time.
+                        </p>
+                        <span class="product-link">View the dashboard &rarr;</span>
+                    </a>
+                    <a href="/okra" class="product-card">
+                        <div class="product-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                        </div>
+                        <h3>OKRA</h3>
+                        <p>
+                            Our work beyond Title II, in three tabs: Engagement (training, consultation, outreach), Solutions (Equalify and PDF scanning), and AI Leaders.
+                        </p>
+                        <span class="product-link">View OKRA &rarr;</span>
+                    </a>
+                    <a href="/objective-7" class="product-card">
+                        <div class="product-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                        </div>
+                        <h3>OKRA Objective 7</h3>
+                        <p>
+                            The campus digital accessibility objective and its five key results, with baselines, targets, owners, and progress.
+                        </p>
+                        <span class="product-link">View Objective 7 &rarr;</span>
+                    </a>
+                    <a href="/portfolio" class="product-card">
+                        <div class="product-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                        </div>
+                        <h3>Portfolio</h3>
+                        <p>
+                            The projects the team is running, with status, scope, and who is working on each one.
+                        </p>
+                        <span class="product-link">View the portfolio &rarr;</span>
+                    </a>
+                    <a href="/raci" class="product-card">
+                        <div class="product-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
+                        <h3>RACI</h3>
+                        <p>
+                            Who is responsible, accountable, consulted, and informed for each of the team&rsquo;s activities.
+                        </p>
+                        <span class="product-link">View the RACI chart &rarr;</span>
+                    </a>
                     <a href={site.equalifyUrl} class="product-card" rel="noopener" target="_blank">
                         <div class="product-icon">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                                <line x1="3" y1="9" x2="21" y2="9"/>
-                                <line x1="9" y1="21" x2="9" y2="9"/>
-                            </svg>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
                         </div>
-                        <span class="project-status status-live">Live</span>
-                        <h3>Equalify</h3>
+                        <h3>Equalify Hub</h3>
                         <p>
-                            Open-source platform for tracking and managing web accessibility issues
-                            across sites. Visit the Equalify Hub for tools, docs, and updates.
+                            Tools, documentation, and updates for Equalify, the open-source
+                            accessibility platform the team builds and runs for UIC.
                         </p>
-                        <span class="product-link">Open Equalify Hub &rarr;</span>
+                        <span class="product-link">Open Equalify Hub (new tab) &rarr;</span>
                     </a>
-                    <a href="/key-results" class="product-card">
-                        <div class="product-icon">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
-                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-                            </svg>
-                        </div>
-                        <span class="project-status status-live">Live</span>
-                        <h3>Accessibility Training</h3>
-                        <p>
-                            Monthly webinars, department and unit trainings, and the accessibility
-                            course for UIC staff and faculty.
-                        </p>
-                        <span class="product-link">View key results &rarr;</span>
-                    </a>
-                    <a href="/key-results" class="product-card">
-                        <div class="product-icon">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
-                                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"/>
-                            </svg>
-                        </div>
-                        <span class="project-status status-live">Live</span>
-                        <h3>Accessibility Services &amp; Consultation</h3>
-                        <p>
-                            Help desk support, weekly office hours, and one-on-one consultations
-                            for accessibility questions across campus.
-                        </p>
-                        <span class="product-link">View key results &rarr;</span>
-                    </a>
-                    <a href="/key-results" class="product-card">
-                        <div class="product-icon">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                                <circle cx="9" cy="7" r="4"/>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                            </svg>
-                        </div>
-                        <span class="project-status status-live">Live</span>
-                        <h3>Accessibility Outreach</h3>
-                        <p>
-                            The accessibility liaison network and partnerships expanding engagement
-                            across UIC colleges and departments.
-                        </p>
-                        <span class="product-link">View key results &rarr;</span>
-                    </a>
-                    <div class="product-card">
-                        <div class="product-icon">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
-                                <circle cx="12" cy="12" r="3"/>
-                                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-                            </svg>
-                        </div>
-                        <span class="project-status status-planned">On the roadmap</span>
-                        <h3>AI Leaders</h3>
-                        <p>
-                            Data views for the AI Leaders project are planned as DASE Hub expands its
-                            coverage across the team's work.
-                        </p>
-                        <span class="product-link">Coming soon</span>
-                    </div>
-                    <div class="product-card">
-                        <div class="product-icon">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
-                                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
-                            </svg>
-                        </div>
-                        <span class="project-status status-planned">On the roadmap</span>
-                        <h3>Open Source Fund</h3>
-                        <p>
-                            Coverage for the Open Source Fund is planned as part of the team's
-                            broader project rollout.
-                        </p>
-                        <span class="product-link">Coming soon</span>
-                    </div>
                 </div>
 
                 <div class="open-source-callout">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#001e62" stroke-width="2">
-                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#001e62" stroke-width="2" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="16" x2="12" y2="12"/>
+                        <line x1="12" y1="8" x2="12.01" y2="8"/>
                     </svg>
                     <div>
-                        <h3>Built in the open</h3>
+                        <h3>Who runs it</h3>
                         <p>
-                            DASE Hub and the team's projects are maintained by the{' '}
-                            University of Illinois Chicago (UIC) Digital Accessibility team.
-                            Browse the repositories and follow along.{' '}
-                            <a href={`https://github.com/${site.githubOrg}`} rel="noopener" target="_blank">View on GitHub &rarr;</a>
+                            DASE Hub is maintained by the{' '}
+                            <a href="https://accessibility.uic.edu" rel="noopener">UIC Digital Accessibility team</a>.
+                            Questions, or a number that looks wrong? Email{' '}
+                            <a href="mailto:caitken@uic.edu">caitken@uic.edu</a>.
                         </p>
                     </div>
                 </div>

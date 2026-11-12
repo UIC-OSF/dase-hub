@@ -280,7 +280,7 @@ export const AdminPage: FC<{
                                                 <label for={`also-${objective.id}`}>Also show on</label>
                                                 <select id={`also-${objective.id}`} name="also_on_tab">
                                                     <option value="">No other tab</option>
-                                                    {(['title-ii', 'service', 'equalify'] as TabId[]).filter(tab => tab !== tabOf(objective)).map(tab => (
+                                                    {(['title-ii', 'service', 'equalify', 'ai-leaders'] as TabId[]).filter(tab => tab !== tabOf(objective)).map(tab => (
                                                         <option value={tab} selected={objective.alsoOnTab === tab}>{TAB_LABELS[tab]}</option>
                                                     ))}
                                                 </select>

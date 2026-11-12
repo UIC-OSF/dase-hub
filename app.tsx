@@ -7,11 +7,10 @@ import { logView } from '#src/utils/db';
 import { setEvent } from '#src/utils/event';
 
 // Migrated pages (JSX components)
-import { AboutPage } from '#src/pages/about';
 import { feedbackHandler, submitFeatureHandler, voteHandler, deleteFeatureHandler } from '#src/pages/feedback';
-import { signupHandler, signupSubmitHandler } from '#src/pages/signup';
 import { homeHandler } from '#src/pages/home';
 import { keyResultsHandler } from '#src/pages/key-results';
+import { PortfolioPage, RaciPage, OkraPage } from '#src/pages/team';
 import { submitStatsHandler, submitStatsUpdateHandler, submitStatsAddHandler, submitStatsEditFormHandler, submitStatsNewFormHandler } from '#src/pages/submit-stats';
 import {
     adminHandler, adminLoginHandler, adminLogoutHandler, adminSyncHandler,
@@ -71,23 +70,28 @@ app.get('/logout', logout);
 
 // ============ MIGRATED ROUTES (Hono native JSX) ============
 app.get('/', homeHandler);
-app.get('/about', (c) => c.html(<AboutPage />));
+// The About and Sign Up pages were retired; the home page covers what the Hub is.
+app.get('/about', (c) => c.redirect('/', 302));
 // Updates content is Equalify news (from equalify-docs) — link out rather than host it here.
 // Restore local pages via pages/updates.tsx + pages/reports.tsx when a DASE docs repo exists.
 app.get('/updates', (c) => c.redirect(`${config.equalifyHubUrl}/updates`, 302));
 app.get('/updates/:slug', (c) => c.redirect(`${config.equalifyHubUrl}/updates/${c.req.param('slug')}`, 302));
 app.get('/reports', (c) => c.redirect(`${config.equalifyHubUrl}/updates`, 302));
 app.get('/reports/:slug', (c) => c.redirect(`${config.equalifyHubUrl}/reports/${c.req.param('slug')}`, 302));
-app.get('/roadmap', (c) => c.redirect('/about#roadmap', 302));
+app.get('/roadmap', (c) => c.redirect('/', 302));
 // Equalify products live on the Equalify Hub — link out rather than host them here
 app.get('/dashboard', (c) => c.redirect(`${config.equalifyHubUrl}/dashboard`, 302));
 app.get('/dashboard/*', (c) => c.redirect(`${config.equalifyHubUrl}/dashboard`, 302));
 app.get('/reflow', (c) => c.redirect(`${config.equalifyHubUrl}/reflow`, 302));
 app.get('/reflow/*', (c) => c.redirect(`${config.equalifyHubUrl}/reflow`, 302));
-app.get('/signup', signupHandler);
-app.post('/signup/submit', signupSubmitHandler);
+app.get('/signup', (c) => c.redirect('/', 302));
 // Key Results dashboard + manual stats + admin
 app.get('/key-results', keyResultsHandler);
+app.get('/portfolio', (c) => c.html(<PortfolioPage />));
+app.get('/project-portfolio', (c) => c.redirect('/portfolio', 302));
+app.get('/raci', (c) => c.html(<RaciPage />));
+app.get('/okra', keyResultsHandler);
+app.get('/objective-7', (c) => c.html(<OkraPage />));
 app.get('/submit-stats', submitStatsHandler);
 app.get('/submit-stats/edit', submitStatsEditFormHandler);
 app.get('/submit-stats/new', submitStatsNewFormHandler);

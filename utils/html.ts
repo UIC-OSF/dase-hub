@@ -79,7 +79,6 @@ export function nav(user = getCurrentUser()) {
 
 // Generate footer
 export function footer(links: { href: string; label: string }[] = [
-    { href: '/about', label: 'About' },
     { href: `https://github.com/${config.githubOrg}`, label: 'GitHub' },
     { href: config.equalifyHubUrl, label: 'Equalify' }
 ]) {

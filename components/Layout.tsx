@@ -53,8 +53,6 @@ type User = {
 } | null;
 
 export const Nav: FC<{ user?: User; product?: string }> = ({ user, product }) => {
-    const signupLabel = 'Sign Up for Updates';
-    const signupHref = '/signup';
     return (
         <header class="site-header">
             <div class="top-bar"></div>
@@ -67,10 +65,11 @@ export const Nav: FC<{ user?: User; product?: string }> = ({ user, product }) =>
                     </a>
                     <div class="nav-links">
                         <a href="/">Home</a>
-                        <a href="/about">About</a>
-                        <a href="/key-results">Key Results</a>
-                        <a href="/feedback">Feedback</a>
-                        {user ? (
+                        <a href="/key-results">ADA Title II</a>
+                        <a href="/okra">OKRA</a>
+                        <a href="/portfolio">Portfolio</a>
+                        <a href="/raci">RACI</a>
+                        {user && (
                             <>
                                 <a href={`/${user.login}`} style="display:flex;align-items:center;gap:8px;">
                                     <img src={user.avatar_url} alt={user.login} style="width:20px;height:20px;border-radius:50%;" />
@@ -78,8 +77,6 @@ export const Nav: FC<{ user?: User; product?: string }> = ({ user, product }) =>
                                 </a>
                                 <a href="/logout">Sign out</a>
                             </>
-                        ) : (
-                            <a href={signupHref} class="sign-in-btn">{signupLabel}</a>
                         )}
                     </div>
                     <button class="nav-mobile-toggle" onclick="document.querySelector('.nav-mobile').classList.toggle('open')" aria-label="Toggle menu">
@@ -92,20 +89,19 @@ export const Nav: FC<{ user?: User; product?: string }> = ({ user, product }) =>
                 </div>
                 <div class="nav-mobile">
                     <a href="/">Home</a>
-                    <a href="/about">About</a>
-                    <a href="/key-results">Key Results</a>
-                    <a href="/feedback">Feedback</a>
-                    {user ? (
+                    <a href="/key-results">ADA Title II</a>
+                        <a href="/okra">OKRA</a>
+                        <a href="/portfolio">Portfolio</a>
+                        <a href="/raci">RACI</a>
+                    {user && (
                         <>
                             <a href={`/${user.login}`}>{user.login}</a>
                             <a href="/logout">Sign out</a>
                         </>
-                    ) : (
-                        <a href={signupHref} class="sign-in-mobile">{signupLabel}</a>
                     )}
                 </div>
             </nav>
-            <script dangerouslySetInnerHTML={{ __html: `(function(){var p=location.pathname;document.querySelectorAll('.nav-links a, .nav-mobile a').forEach(function(a){var h=a.getAttribute('href');if(!h||h==='/signup'||a.classList.contains('sign-in-btn')||a.classList.contains('sign-in-mobile'))return;if(h==='/'?p==='/':p===h||p.startsWith(h+'/'))a.classList.add('active');});})();` }} />
+            <script dangerouslySetInnerHTML={{ __html: `(function(){var p=location.pathname;document.querySelectorAll('.nav-links a, .nav-mobile a').forEach(function(a){var h=a.getAttribute('href');if(!h||a.classList.contains('sign-in-btn')||a.classList.contains('sign-in-mobile'))return;if(h==='/'?p==='/':p===h||p.startsWith(h+'/'))a.classList.add('active');});})();` }} />
         </header>
     );
 };

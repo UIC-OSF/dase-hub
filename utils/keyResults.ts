@@ -53,13 +53,14 @@ export interface Metric {
  * Key Results is split into tabs. Every objective (card) belongs to one; the
  * special 'highlights' objective renders as stat tiles above the tabs.
  */
-export type TabId = 'highlights' | 'title-ii' | 'service' | 'equalify';
+export type TabId = 'highlights' | 'title-ii' | 'service' | 'equalify' | 'ai-leaders';
 
 export const TAB_LABELS: Record<TabId, string> = {
     'highlights': 'Highlights (above the tabs)',
     'title-ii': 'ADA Title II',
     'service': 'Engagement',
     'equalify': 'Solutions',
+    'ai-leaders': 'AI Leaders',
 };
 
 export const isTabId = (value: string): value is TabId => Object.prototype.hasOwnProperty.call(TAB_LABELS, value);
@@ -67,6 +68,7 @@ export const isTabId = (value: string): value is TabId => Object.prototype.hasOw
 /** Where cards that predate tabs belong; anything else falls back on whether it's synced. */
 const DEFAULT_TABS: Record<string, TabId> = {
     'highlights': 'highlights',
+    'ai-leaders': 'ai-leaders',
     'title-ii': 'title-ii',
     'equalify-reflow': 'title-ii',
     'compliance': 'title-ii',
@@ -127,8 +129,12 @@ export interface IntegrationState {
     /** Optional sources that failed on an otherwise successful sync (e.g. CloudWatch unreachable) */
     lastWarning?: string;
     lastStats?: Record<string, number>;
+    /** Time series for the Key Results graphs, keyed by name; `at` is YYYY-MM (monthly) or YYYY-MM-DD (daily). */
+    series?: Record<string, SeriesPoint[]>;
     syncCount?: number;
 }
+
+export interface SeriesPoint { at: string; value: number }
 
 /**
  * Plain-language definitions for every synced stat, keyed "<source>:<sourceKey>".
@@ -151,6 +157,9 @@ export const SOURCE_DEFINITIONS: Record<string, string> = {
     'equalify:uic_urls': 'uic.edu pages and documents tracked in Equalify audits.',
     'equalify:pages_scanned_30d': "Web pages and PDFs checked for accessibility issues by Equalify's scanners in the last 30 days (WCAG rules for pages, PDF/UA for documents).",
     'equalify:html_scanned_30d': "Web pages checked against WCAG rules by Equalify's scanners in the last 30 days.",
+    'equalify:pages_passing_share': 'Share of monitored pages and documents with no issues detected by automated checks. Automated checks find roughly half of real issues, so this is not a conformance score.',
+    'equalify:rescan_fixed_share': 'Across sites scanned more than once with the same pages, the share of issues from the first scan that automated scans no longer find. Based on automated checks, not a manual review of each fix.',
+    'equalify:issues_resolved': 'Detected issues that are no longer found on sites rescanned with the identical set of pages (first scan compared with latest). No longer detected, not confirmed fixed.',
     'equalify:pages_per_day_30d': 'Average web pages and PDFs scanned per day over the last 30 days.',
     'equalify:rescan_delta_pct': 'Change in detected issues from first to latest scan, across sites rescanned with the identical set of pages. Detected, not confirmed fixed.',
     'reflow:documents_processed': 'PDFs converted to accessible, tagged output by Equalify Iris (a 40-page PDF counts once).',

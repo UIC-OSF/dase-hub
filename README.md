@@ -29,8 +29,6 @@ Equalify itself lives on the [Equalify Hub](https://equalify.uic.edu); DASE Hub 
 - **Regular check-ins** — weekly during active buildout, shifting to monthly at steady state. New requests are reviewed and prioritized against the roadmap.
 - **Updates on releases** — a short progress update goes out on each meaningful update or release.
 
-See the [About page](https://equalify.uic.edu/about) for the full roadmap (it's also rendered from this app at `/about`).
-
 ---
 
 ## Local Development

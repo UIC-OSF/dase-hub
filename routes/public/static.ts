@@ -22,9 +22,9 @@ export const sitemap = (c: Context) => {
     const paths = [
         { path: '/', priority: '1.0', changefreq: 'daily' },
         { path: '/key-results', priority: '0.9', changefreq: 'daily' },
-        { path: '/about', priority: '0.9', changefreq: 'monthly' },
-        { path: '/feedback', priority: '0.6', changefreq: 'weekly' },
-        { path: '/signup', priority: '0.6', changefreq: 'monthly' },
+        { path: '/okra', priority: '0.9', changefreq: 'daily' },
+        { path: '/portfolio', priority: '0.6', changefreq: 'monthly' },
+        { path: '/raci', priority: '0.6', changefreq: 'monthly' },
     ];
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>

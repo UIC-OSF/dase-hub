@@ -28,7 +28,7 @@
  * the metric's progress meter (0–100) where a natural percentage exists.
  */
 import { CloudWatchClient, GetMetricStatisticsCommand } from '@aws-sdk/client-cloudwatch';
-import { getObjectives, putObjective, getIntegration, putIntegration, applyTarget, SOURCE_DEFINITIONS } from '#src/utils/keyResults';
+import { getObjectives, putObjective, getIntegration, putIntegration, applyTarget, SOURCE_DEFINITIONS, SeriesPoint } from '#src/utils/keyResults';
 
 const GRAPHQL_URL = process.env.EQUALIFY_GRAPHQL_URL || 'https://graphql.equalifyapp.com/v1/graphql';
 const PUBLIC_STATS_URL = process.env.EQUALIFY_PUBLIC_STATS_URL || 'https://api.equalifyapp.com/public/getPublicStats';
@@ -150,6 +150,12 @@ async function fetchSiteStats(): Promise<Stats> {
 
 interface ScanRow { id: string; audit_id: string; created_at: string; blocker_count: number | null }
 
+// Series computed alongside the stats on each run; written to the integration record by syncEqualifyStats.
+const freshSeries: Record<string, SeriesPoint[]> = {};
+let passingToday: SeriesPoint | null = null;
+const SERIES_MONTHS = 12;
+const DAILY_POINTS_KEPT = 400;
+
 function samePageSet(a?: string[], b?: string[]): boolean {
     if (!a || !b || a.length === 0 || a.length !== b.length) return false;
     const sortedA = [...a].sort();
@@ -176,10 +182,12 @@ async function fetchRescanStats(): Promise<Stats> {
         byAudit.set(scan.audit_id, list);
     }
     const pairs: Array<[ScanRow, ScanRow]> = [];
+    const history = new Map<string, ScanRow[]>(); // first scan id → that audit's scans, oldest first
     for (const list of byAudit.values()) {
         if (list.length < 2) continue;
         list.sort((a, b) => a.created_at.localeCompare(b.created_at));
         pairs.push([list[0], list[list.length - 1]]);
+        history.set(list[0].id, list);
     }
 
     // Page-id lists are large, so only fetch them for the scans being compared.
@@ -194,13 +202,40 @@ async function fetchRescanStats(): Promise<Stats> {
     }
 
     let audits = 0, first = 0, latest = 0;
+    const cohort: ScanRow[][] = [];
     for (const [a, b] of pairs) {
         if (!samePageSet(pages.get(a.id), pages.get(b.id))) continue;
         audits++;
         first += a.blocker_count!;
         latest += b.blocker_count!;
+        cohort.push(history.get(a.id)!);
     }
+
+    // Month by month: issues at each audit's first scan minus issues at its last scan of that month or earlier,
+    // summed over the audits that had started by then. Net, so a month where new issues appear can dip.
+    const now = new Date();
+    const resolved: SeriesPoint[] = [];
+    for (let back = SERIES_MONTHS - 1; back >= 0; back--) {
+        const month = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - back, 1)).toISOString().slice(0, 7);
+        const cutoff = `${month}-31T99`; // sorts after any timestamp in the month
+        let started = 0, net = 0;
+        for (const scans of cohort) {
+            if (scans[0].created_at > cutoff) continue;
+            started++;
+            let last = scans[0];
+            for (const scan of scans) if (scan.created_at <= cutoff) last = scan;
+            net += scans[0].blocker_count! - last.blocker_count!;
+        }
+        if (started > 0) resolved.push({ at: month, value: net });
+    }
+    freshSeries.issues_resolved = resolved;
+
     return {
+        issues_resolved: first - latest,
+        // Positive share for display ("48%" fixed), alongside the signed rescan_delta_pct
+        rescan_fixed_share: first ? Math.round(((first - latest) / first) * 100) : 0,
+        rescan_fixed_share_fill: first ? clamp(Math.round(((first - latest) / first) * 100), 0, 100) : 0,
+        issues_resolved_fill: first ? clamp(Math.round(((first - latest) / first) * 100), 0, 100) : 0,
         rescan_audits: audits,
         rescan_issues_first: first,
         rescan_issues_latest: latest,
@@ -250,7 +285,19 @@ async function fetchUsageStats(core: Stats): Promise<Stats> {
         throw new Error('Equalify public stats: unexpected response (is /public/getPublicStats deployed?)');
     }
     const registered: number = json.totalUsers;
+    // Daily Title II snapshot: share of monitored pages with no detected issues
+    const conformance = json.snapshot?.conformance;
+    const passing: Stats = {};
+    if (conformance && typeof conformance.conformantShare === 'number') {
+        const share = Math.round(conformance.conformantShare * 1000) / 10;
+        passing.pages_passing_share = share;
+        passing.pages_passing_share_fill = clamp(Math.round(share), 0, 100);
+        passing.pages_passing = conformance.conformantPages ?? 0;
+        passing.pages_monitored = conformance.monitoredPages ?? 0;
+        passingToday = { at: String(conformance.computedAt || new Date().toISOString()).slice(0, 10), value: share };
+    }
     return {
+        ...passing,
         registered_users: registered,
         new_users_30d: json.newUsers30d ?? 0,
         active_users_30d: json.activeUsers30d ?? 0,
@@ -336,6 +383,14 @@ export async function syncEqualifyStats(): Promise<SyncResult> {
         // Meter fills are an implementation detail; keep the admin chips to real stats
         const lastStats = Object.fromEntries(Object.entries(stats).filter(([key]) => !key.endsWith('_fill')));
 
+        // Series: monthly ones are recomputed in full; the daily pass rate has no history upstream, so it accumulates here
+        const series: Record<string, SeriesPoint[]> = { ...(prior?.series || {}), ...freshSeries };
+        if (passingToday) {
+            const today = passingToday;
+            const kept = (series.pages_passing_share || []).filter(point => point.at !== today.at);
+            series.pages_passing_share = [...kept, today].sort((a, b) => a.at.localeCompare(b.at)).slice(-DAILY_POINTS_KEPT);
+        }
+
         await putIntegration({
             id: 'equalify',
             name: 'Equalify',
@@ -345,6 +400,7 @@ export async function syncEqualifyStats(): Promise<SyncResult> {
             lastError: undefined,
             lastWarning: warnings.length ? warnings.join('; ') : undefined,
             lastStats,
+            series,
             syncCount: (prior?.syncCount || 0) + 1,
         });
 
@@ -359,6 +415,7 @@ export async function syncEqualifyStats(): Promise<SyncResult> {
             lastError: err.message,
             lastWarning: prior?.lastWarning,
             lastStats: prior?.lastStats,
+            series: prior?.series,
             syncCount: prior?.syncCount || 0,
         });
         return { ok: false, error: err.message, syncedAt };

@@ -319,35 +319,19 @@ export const HomePage: FC = () => {
                         </p>
                         <span class="product-link">View the RACI chart &rarr;</span>
                     </a>
-                    <a href={site.equalifyUrl} class="product-card" rel="noopener" target="_blank">
+                    <a href="/testimonials" class="product-card">
                         <div class="product-icon">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"/></svg>
                         </div>
-                        <h3>Equalify Hub</h3>
+                        <h3>Testimonials</h3>
                         <p>
-                            Tools, documentation, and updates for Equalify, the open-source
-                            accessibility platform the team builds and runs for UIC.
+                            What partners across the university say about the team&rsquo;s training,
+                            consultation, and resources.
                         </p>
-                        <span class="product-link">Open Equalify Hub (new tab) &rarr;</span>
+                        <span class="product-link">Read the testimonials &rarr;</span>
                     </a>
                 </div>
 
-                <div class="open-source-callout">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#001e62" stroke-width="2" aria-hidden="true">
-                        <circle cx="12" cy="12" r="10"/>
-                        <line x1="12" y1="16" x2="12" y2="12"/>
-                        <line x1="12" y1="8" x2="12.01" y2="8"/>
-                    </svg>
-                    <div>
-                        <h3>Who runs it</h3>
-                        <p>
-                            DASE Hub is maintained by the{' '}
-                            <a href="https://accessibility.uic.edu" rel="noopener">UIC Digital Accessibility team</a>.
-                            Questions, or a number that looks wrong? Email{' '}
-                            <a href="mailto:caitken@uic.edu">caitken@uic.edu</a>.
-                        </p>
-                    </div>
-                </div>
             </section>
             </main>
         </BaseLayout>

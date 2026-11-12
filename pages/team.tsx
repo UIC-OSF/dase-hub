@@ -1,7 +1,7 @@
 import type { FC } from 'hono/jsx';
 import { Layout } from '#src/components/Layout';
 import { getCurrentUser } from '#src/utils/auth';
-import { PROJECTS, RACI_MEMBERS, RACI_ACTIVITIES, OKRA_OBJECTIVE } from '#src/utils/teamData';
+import { PROJECTS, RACI_MEMBERS, RACI_ACTIVITIES, OKRA_OBJECTIVE, TESTIMONIALS } from '#src/utils/teamData';
 
 // Project Portfolio and RACI pages, migrated from Jemma's prototype site.
 // Content lives in utils/teamData.ts.
@@ -58,6 +58,14 @@ const styles = `
 .tm-meter span { display: block; height: 100%; background: #2e7d32; border-radius: 5px; }
 .tm-links { margin-top: 32px; font-size: 15px; color: #1f2937; }
 .tm-links a { color: #C8102E; font-weight: 600; }
+
+/* Testimonials */
+.tm-quotes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin: 0 0 36px; padding: 0; list-style: none; }
+@media (max-width: 760px) { .tm-quotes { grid-template-columns: minmax(0, 1fr); } }
+.tm-quote { margin: 0; height: 100%; background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid #C8102E; border-radius: 10px; padding: 24px 28px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.tm-quote blockquote { margin: 0; font-size: 16px; line-height: 1.65; color: #1f2937; }
+.tm-quote blockquote::before { content: "\\201C"; display: block; font-size: 44px; line-height: 0.8; font-weight: 700; color: #C8102E; margin-bottom: 4px; }
+.tm-quote figcaption { margin-top: 12px; font-size: 14px; font-weight: 600; color: #4b5563; }
 `;
 
 export const PortfolioPage: FC = () => (
@@ -170,3 +178,38 @@ export const OkraPage: FC = () => (
         </div>
     </Layout>
 );
+
+const QuoteList: FC<{ items: typeof TESTIMONIALS }> = ({ items }) => (
+    <ul class="tm-quotes">
+        {items.map(t => (
+            <li>
+                <figure class="tm-quote">
+                    <blockquote>{t.quote}</blockquote>
+                    {t.source && <figcaption>{t.source}</figcaption>}
+                </figure>
+            </li>
+        ))}
+    </ul>
+);
+
+export const TestimonialsPage: FC = () => {
+    const categories = [...new Set(TESTIMONIALS.map(t => t.category).filter(Boolean))] as string[];
+    const uncategorized = TESTIMONIALS.filter(t => !t.category);
+    return (
+        <Layout title="Testimonials" styles={styles} user={getCurrentUser()}>
+            <div class="tm-container">
+                <h1>Testimonials</h1>
+                <p class="tm-intro">
+                    What partners across the university say about working with the Digital Accessibility team.
+                </p>
+                {categories.map(cat => (
+                    <section>
+                        <h2>{cat}</h2>
+                        <QuoteList items={TESTIMONIALS.filter(t => t.category === cat)} />
+                    </section>
+                ))}
+                {uncategorized.length > 0 && <QuoteList items={uncategorized} />}
+            </div>
+        </Layout>
+    );
+};

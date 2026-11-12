@@ -247,3 +247,22 @@ export const OKRA_OBJECTIVE = {
         { title: 'Accessible YouTube videos', metric: 'Make publicly available UIC YouTube videos accessible (24,594 public videos).', baseline: '754 accessible videos', target: '12,000 accessible videos', cycle: 'Current year (of a multi-year effort)', percent: 6, owner: 'Jemma Ku' },
     ],
 };
+
+// Testimonials, from Jemma's prototype site (a11ydoer.github.io/uic/testimonials.html) and the team's
+// "Team Testimonials" document (Nov 12, 2026). All are anonymous until consent is obtained.
+// To add one, append an entry. `category` groups quotes under a heading once any entry has one;
+// `source` is an optional attribution line (a role or unit, not a person's name unless they agreed).
+export interface Testimonial { quote: string; source?: string; category?: string }
+export const TESTIMONIALS: Testimonial[] = [
+    { category: "General Services & Websites", quote: "Your homepage shows the community of folks who have invested in training, and it's like, wow, this is a lot of people who really believe in supporting digital accessibility. That drew me to your site and implies that UIC is doing some incredible things." },
+    { category: "General Services & Websites", quote: "I looked around your website, the documents, the support, and everything you offer is really impressive. It allows for your community to have self-service—first you're training them, and then you are offering those support elements very openly." },
+    { category: "General Services & Websites", quote: "I get the sense that your work is [authentic] and not a look-alike... I can see that you truly are doing the work by the community members who are there, and really, the thought and effort that has been placed into all of the resources that you're providing." },
+    { category: "General Services & Websites", quote: "...your team was on fire today. Presentation, instructions, Q&A. You all did an amazing job with excellence, intelligence, and grace! Thank you." },
+    { category: "Consultations & Trainings", quote: "THANK YOU for meeting with me today! The Dean was very impressed with the work done and I gave all the credit to you all!" },
+    { category: "Consultations & Trainings", quote: "It was great to attend your presentation at the IT Community Conference last week. You explained the topic of accessibility so well, and I learned a great deal from your talk. Thank you for offering to provide guidance on creating accessible tables in PDFs." },
+    { category: "Consultations & Trainings", quote: "...you have guided me over the past few consultations which allowed me to figure it out! I was able to submit my dissertation, and it was approved by the graduate college! Thank you sooo much for your help!" },
+    { category: "Consultations & Trainings", quote: "It was a wonderfully organized and informative event. It is nice to share what each one of us have been doing and learning from others. [You]...did an amazing job in organizing this event." },
+    { category: "Consultations & Trainings", quote: "Thank you so much for providing further clarification on this! The tips you listed at the end of your note are very helpful as well, I really appreciate you taking the time to provide clear recommendations and steps regarding this issue. You and your team are doing incredible work!" },
+    { category: "Consultations & Trainings", quote: "It [the workshop on creating accessible PDFs for the University Library] was one of the most useful Zoom presentations I have watched here at UIC... Thank you for making this interesting and intelligible to those of us who have not yet worked with accessibility issues." },
+    { category: "Consultations & Trainings", quote: "It was a great presentation and we so appreciate the time and effort you put into it." },
+];

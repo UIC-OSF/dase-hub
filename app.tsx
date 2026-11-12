@@ -10,7 +10,7 @@ import { setEvent } from '#src/utils/event';
 import { feedbackHandler, submitFeatureHandler, voteHandler, deleteFeatureHandler } from '#src/pages/feedback';
 import { homeHandler } from '#src/pages/home';
 import { keyResultsHandler } from '#src/pages/key-results';
-import { PortfolioPage, RaciPage, OkraPage } from '#src/pages/team';
+import { PortfolioPage, RaciPage, OkraPage, TestimonialsPage } from '#src/pages/team';
 import { submitStatsHandler, submitStatsUpdateHandler, submitStatsAddHandler, submitStatsEditFormHandler, submitStatsNewFormHandler } from '#src/pages/submit-stats';
 import {
     adminHandler, adminLoginHandler, adminLogoutHandler, adminSyncHandler,
@@ -90,6 +90,7 @@ app.get('/key-results', keyResultsHandler);
 app.get('/portfolio', (c) => c.html(<PortfolioPage />));
 app.get('/project-portfolio', (c) => c.redirect('/portfolio', 302));
 app.get('/raci', (c) => c.html(<RaciPage />));
+app.get('/testimonials', (c) => c.html(<TestimonialsPage />));
 app.get('/okra', keyResultsHandler);
 app.get('/objective-7', (c) => c.html(<OkraPage />));
 app.get('/submit-stats', submitStatsHandler);

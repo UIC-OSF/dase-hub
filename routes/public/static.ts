@@ -25,6 +25,7 @@ export const sitemap = (c: Context) => {
         { path: '/okra', priority: '0.9', changefreq: 'daily' },
         { path: '/portfolio', priority: '0.6', changefreq: 'monthly' },
         { path: '/raci', priority: '0.6', changefreq: 'monthly' },
+        { path: '/testimonials', priority: '0.6', changefreq: 'monthly' },
     ];
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>

@@ -69,6 +69,7 @@ export const Nav: FC<{ user?: User; product?: string }> = ({ user, product }) =>
                         <a href="/okra">OKRA</a>
                         <a href="/portfolio">Portfolio</a>
                         <a href="/raci">RACI</a>
+                        <a href="/testimonials">Testimonials</a>
                         {user && (
                             <>
                                 <a href={`/${user.login}`} style="display:flex;align-items:center;gap:8px;">
@@ -93,6 +94,7 @@ export const Nav: FC<{ user?: User; product?: string }> = ({ user, product }) =>
                         <a href="/okra">OKRA</a>
                         <a href="/portfolio">Portfolio</a>
                         <a href="/raci">RACI</a>
+                        <a href="/testimonials">Testimonials</a>
                     {user && (
                         <>
                             <a href={`/${user.login}`}>{user.login}</a>

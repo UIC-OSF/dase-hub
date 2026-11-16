@@ -1,7 +1,7 @@
 import type { FC } from 'hono/jsx';
 import { Layout } from '#src/components/Layout';
 import { getCurrentUser } from '#src/utils/auth';
-import { PROJECTS, RACI_MEMBERS, RACI_ACTIVITIES, OKRA_OBJECTIVE, TESTIMONIALS } from '#src/utils/teamData';
+import { PROJECTS, RACI_MEMBERS, RACI_FULL_TIME, RACI_ACTIVITIES, OKRA_OBJECTIVE, TESTIMONIALS } from '#src/utils/teamData';
 
 // Project Portfolio and RACI pages, migrated from Jemma's prototype site.
 // Content lives in utils/teamData.ts.
@@ -59,6 +59,18 @@ const styles = `
 .tm-links { margin-top: 32px; font-size: 15px; color: #1f2937; }
 .tm-links a { color: #C8102E; font-weight: 600; }
 
+/* Portfolio tags: every tag carries its name, so colour is never the only cue. */
+.tm-card ul.tm-tags { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; padding: 0; line-height: 1.3; }
+.tm-tag { font-size: 12px; font-weight: 700; border-radius: 999px; padding: 3px 10px; border: 1px solid; white-space: nowrap; }
+.tm-tag-compliance     { background: #fde8ec; color: #8f0b21; border-color: #f3b6c1; }
+.tm-tag-cost-reduction { background: #e3f4e6; color: #17602a; border-color: #a9d8b3; }
+.tm-tag-engineering    { background: #e3ebfa; color: #0b3a8f; border-color: #aec3ee; }
+.tm-tag-flagship       { background: #fdf0d3; color: #7a4a00; border-color: #ecce8a; }
+.tm-tag-ongoing        { background: #eef0f3; color: #374151; border-color: #cbd1d9; }
+.tm-tag-partnership    { background: #f0e6fa; color: #5b21a6; border-color: #cfb5ee; }
+.tm-tag-services       { background: #dff3f4; color: #0b5a63; border-color: #a3d5da; }
+.tm-tag-sustainability { background: #ecf3d6; color: #44591a; border-color: #c5d795; }
+
 /* Testimonials */
 .tm-quotes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin: 0 0 36px; padding: 0; list-style: none; }
 @media (max-width: 760px) { .tm-quotes { grid-template-columns: minmax(0, 1fr); } }
@@ -77,10 +89,10 @@ export const PortfolioPage: FC = () => (
             <div class="tm-grid">
                 {PROJECTS.map(project => (
                     <article class="tm-card">
-                        <div class="tm-card-head">
-                            <h3>{project.title}</h3>
-                            <span class="tm-status">{project.status}</span>
-                        </div>
+                        <div class="tm-card-head"><h3>{project.title}</h3></div>
+                        <ul class="tm-tags" aria-label="Tags">
+                            {project.tags.map(tag => <li class={`tm-tag tm-tag-${tag.toLowerCase().replace(/\s+/g, '-')}`}>{tag}</li>)}
+                        </ul>
                         <p>{project.description}</p>
                         <ul>{project.items.map(item => <li>{item}</li>)}</ul>
                         <h4>Key Team Members</h4>
@@ -106,7 +118,7 @@ export const RaciPage: FC = () => (
     <Layout title="RACI Matrix" styles={styles} user={getCurrentUser()}>
         <div class="tm-container">
             <h1>RACI Matrix</h1>
-            <p class="tm-intro">Who is responsible, accountable, consulted and informed for each of the UIC Digital Accessibility team's activities.</p>
+            <p class="tm-intro">Who is responsible, accountable, consulted and informed for each of the UIC Digital Accessibility team's activities. Full-time team members are listed.</p>
             <h2>RACI Definitions</h2>
             <ul class="tm-legend">
                 {RACI_ROLES.map(role => (
@@ -115,7 +127,7 @@ export const RaciPage: FC = () => (
             </ul>
             <h2>Team Member Responsibilities</h2>
             <div class="tm-grid">
-                {RACI_MEMBERS.map(member => (
+                {RACI_MEMBERS.filter(member => RACI_FULL_TIME.includes(member.id)).map(member => (
                     <article class="tm-card">
                         <div class="tm-card-head"><h3>{member.name}</h3></div>
                         {CARD_ORDER.map(code => {

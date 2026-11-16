@@ -3,12 +3,42 @@
  * Edit here to change the Project Portfolio and RACI pages.
  */
 
-export interface Project { title: string; status: string; description: string; items: string[]; team: string[] }
+export interface Project { title: string; tags: string[]; description: string; items: string[]; team: string[] }
+
+// Names, order and tags are Jemma's (Nov 12, 2026). "Equalify Platform Integration and Training" combines the
+// former "Equalify Transition and Training" and "Equalify Integration" cards. Tags are listed alphabetically.
+export const PROJECT_TAGS = ['Compliance', 'Cost reduction', 'Engineering', 'Flagship', 'Ongoing', 'Partnership', 'Services', 'Sustainability'] as const;
+export type ProjectTag = typeof PROJECT_TAGS[number];
 
 export const PROJECTS: Project[] = [
     {
+        "title": "ADA Title II Deadline Preparation",
+        "tags": [
+            "Compliance",
+            "Engineering",
+            "Partnership",
+            "Services"
+        ],
+        "description": "Strategic preparation to ensure full compliance with ADA Title II regulations by upcoming deadlines.",
+        "items": [
+            "Gap Analysis",
+            "Policy Updates",
+            "Remediation Priority Plan",
+            "UIC Accessibility Report"
+        ],
+        "team": [
+            "Jemma Ku",
+            "Helen Zhou",
+            "Blake Bertuccelli-Booth"
+        ]
+    },
+    {
         "title": "Accessibility Training and Consultation Services",
-        "status": "Ongoing",
+        "tags": [
+            "Compliance",
+            "Ongoing",
+            "Services"
+        ],
         "description": "Comprehensive training programs designed to empower faculty and staff with the knowledge to create accessible content.",
         "items": [
             "Instructor-Led Workshops",
@@ -23,8 +53,31 @@ export const PROJECTS: Project[] = [
         ]
     },
     {
-        "title": "Equalify Accessibility Platform",
-        "status": "Release",
+        "title": "Accessibility Partnership and Outreach",
+        "tags": [
+            "Flagship",
+            "Ongoing",
+            "Partnership",
+            "Services"
+        ],
+        "description": "Engaging the campus community through targeted events and collaborative workshops.",
+        "items": [
+            "Onsite Faculty Workshop",
+            "Annual Accessibility Liaison Workshop"
+        ],
+        "team": [
+            "Helen Zhou",
+            "Michael Fu",
+            "Michelle Mitchell"
+        ]
+    },
+    {
+        "title": "Equalify Accessibility Dashboard",
+        "tags": [
+            "Compliance",
+            "Engineering",
+            "Flagship"
+        ],
         "description": "Deployment and integration of the Equalify platform to automate scanning and reporting across university digital assets.",
         "items": [
             "System-wide Rollout",
@@ -44,25 +97,59 @@ export const PROJECTS: Project[] = [
         ]
     },
     {
-        "title": "Equalify Transition and Training",
-        "status": "Transition",
-        "description": "Facilitating the migration to Equalify and providing dedicated training for campus units.",
+        "title": "Equalify Iris (Accessible PDF generation)",
+        "tags": [
+            "Cost reduction",
+            "Engineering",
+            "Flagship"
+        ],
+        "description": "AI-driven solution for automated PDF accessibility remediation and tagging.",
+        "items": [
+            "Automated Document Tagging",
+            "Structural Analysis",
+            "Iris Integration"
+        ],
+        "team": [
+            "Dylan Isaac",
+            "Blake Bertuccelli-Booth",
+            "Jemma Ku"
+        ]
+    },
+    {
+        "title": "Equalify Platform Integration and Training",
+        "tags": [
+            "Cost reduction",
+            "Engineering",
+            "Flagship",
+            "Ongoing",
+            "Services"
+        ],
+        "description": "Bringing campus units onto Equalify with migration support and training, and integrating the platform with core university systems.",
         "items": [
             "Platform Migration Support",
             "User Onboarding Sessions",
-            "Documentation & Guides"
+            "Documentation & Guides",
+            "Content management system integration and utilities (e.g., WordPress)",
+            "Learning management system integration (e.g., Canvas)"
         ],
         "team": [
             "Helen Zhou",
             "Jemma Ku",
             "Michael Fu",
             "Michelle Mitchell",
-            "Blake Bertuccelli-Booth"
+            "Blake Bertuccelli-Booth",
+            "Daniel (Trey) Samuel",
+            "Christopher Aitken"
         ]
     },
     {
-        "title": "UIC Open Source Fund",
-        "status": "Initiative",
+        "title": "UIC Open-source fund",
+        "tags": [
+            "Cost reduction",
+            "Flagship",
+            "Partnership",
+            "Sustainability"
+        ],
         "description": "Supporting open-source projects that contribute to the digital accessibility ecosystem.",
         "items": [
             "Grant Applications",
@@ -77,24 +164,12 @@ export const PROJECTS: Project[] = [
         ]
     },
     {
-        "title": "ADA Title II Preparation",
-        "status": "Compliance",
-        "description": "Strategic preparation to ensure full compliance with ADA Title II regulations by upcoming deadlines.",
-        "items": [
-            "Gap Analysis",
-            "Policy Updates",
-            "Remediation Priority Plan",
-            "UIC Accessibility Report"
+        "title": "AI Literacy Education program",
+        "tags": [
+            "Flagship",
+            "Partnership",
+            "Sustainability"
         ],
-        "team": [
-            "Jemma Ku",
-            "Helen Zhou",
-            "Blake Bertuccelli-Booth"
-        ]
-    },
-    {
-        "title": "AI Literacy",
-        "status": "Initiative",
         "description": "Educational initiatives to improve understanding and ethical use of Artificial Intelligence in accessibility.",
         "items": [
             "Foundational Workshops",
@@ -105,49 +180,6 @@ export const PROJECTS: Project[] = [
             "Blake Bertuccelli-Booth",
             "Jemma Ku",
             "Stefin Pasternak"
-        ]
-    },
-    {
-        "title": "Accessibility Outreach",
-        "status": "Ongoing",
-        "description": "Engaging the campus community through targeted events and collaborative workshops.",
-        "items": [
-            "Onsite Faculty Workshop",
-            "Annual Accessibility Liaison Workshop"
-        ],
-        "team": [
-            "Helen Zhou",
-            "Michael Fu",
-            "Michelle Mitchell"
-        ]
-    },
-    {
-        "title": "Equalify Reflow (AI PDF Converter)",
-        "status": "Ongoing",
-        "description": "AI-driven solution for automated PDF accessibility remediation and tagging.",
-        "items": [
-            "Automated Document Tagging",
-            "Structural Analysis",
-            "Reflow Integration"
-        ],
-        "team": [
-            "Dylan Isaac",
-            "Blake Bertuccelli-Booth",
-            "Jemma Ku"
-        ]
-    },
-    {
-        "title": "Equalify Integration",
-        "status": "Ongoing",
-        "description": "Technical integration of the Equalify platform with core university systems.",
-        "items": [
-            "Content management system integration and utilities (e.g., WordPress)",
-            "Learning management system integration (e.g., Canvas)"
-        ],
-        "team": [
-            "Blake Bertuccelli-Booth",
-            "Daniel (Trey) Samuel",
-            "Christopher Aitken"
         ]
     }
 ];
@@ -203,6 +235,9 @@ export const RACI_MEMBERS: { id: string; name: string }[] = [
     }
 ];
 
+/** The RACI page lists full-time team members only (Jemma, Nov 12, 2026). The other columns stay in the data. */
+export const RACI_FULL_TIME = ['jemma', 'helen', 'blake', 'chris-a', 'michael', 'trey'];
+
 /** One row per activity; values are R, A, C, I or a combination like 'A/R', keyed by member id. */
 export const RACI_ACTIVITIES: { activity: string; raci: Record<string, string> }[] = [
     {"activity": "Accessibility Training and Consultation Services", "raci": {"jemma": "C", "helen": "A", "blake": "C", "chris-a": "I", "michael": "R", "michelle": "I", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "R", "brother-j": "I", "stefin": "I"}},
@@ -214,7 +249,7 @@ export const RACI_ACTIVITIES: { activity: string; raci: Record<string, string> }
     {"activity": "Accessibility Outreach", "raci": {"jemma": "C", "helen": "A", "blake": "C", "chris-a": "I", "michael": "R", "michelle": "R", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "I", "brother-j": "I", "stefin": "I"}},
     {"activity": "Scaling Accessibility Impact Beyond UIC", "raci": {"jemma": "A", "helen": "C", "blake": "R", "chris-a": "I", "michael": "I", "michelle": "I", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "I", "brother-j": "I", "stefin": "R"}},
     {"activity": "Accessibility Resources and Tools", "raci": {"jemma": "I", "helen": "A", "blake": "R", "chris-a": "I", "michael": "C", "michelle": "I", "dylan": "C", "chris-k": "C", "trey": "C", "lucy": "I", "brother-j": "I", "stefin": "I"}},
-    {"activity": "Equalify Reflow (AI PDF Converter)", "raci": {"jemma": "I", "helen": "I", "blake": "R", "chris-a": "I", "michael": "I", "michelle": "I", "dylan": "R", "chris-k": "I", "trey": "I", "lucy": "I", "brother-j": "I", "stefin": "I"}},
+    {"activity": "Equalify Iris", "raci": {"jemma": "I", "helen": "I", "blake": "R", "chris-a": "I", "michael": "I", "michelle": "I", "dylan": "R", "chris-k": "I", "trey": "I", "lucy": "I", "brother-j": "I", "stefin": "I"}},
     {"activity": "Equalify Roadmap", "raci": {"jemma": "R", "helen": "C", "blake": "R", "chris-a": "I", "michael": "I", "michelle": "I", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "I", "brother-j": "I", "stefin": "I"}},
     {"activity": "Equalify Manual testing", "raci": {"jemma": "I", "helen": "C", "blake": "A", "chris-a": "I", "michael": "I", "michelle": "I", "dylan": "I", "chris-k": "R", "trey": "I", "lucy": "R", "brother-j": "R", "stefin": "I"}},
     {"activity": "UIC Accessibility Maturity Model", "raci": {"jemma": "R", "helen": "C", "blake": "I", "chris-a": "I", "michael": "I", "michelle": "I", "dylan": "I", "chris-k": "I", "trey": "R", "lucy": "I", "brother-j": "I", "stefin": "I"}},

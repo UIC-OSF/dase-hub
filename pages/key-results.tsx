@@ -389,7 +389,6 @@ const TitleIICharts: FC<{ metrics: any; resolved?: SeriesPoint[] }> = ({ metrics
     // Both graphs start in March 2026 so they cover the same months; the details table keeps January and February
     const course = COURSE_SCORES.rows.slice(2).map(r => ({ month: r.month, value: r.scores[0] }));
     const pdf = COURSE_SCORES.rows.map(r => r.scores[5]);
-    const pdfPoints = COURSE_SCORES.rows.slice(2).map(r => ({ month: r.month, value: r.scores[5] }));
     const firstIssue = issues[0], lastIssue = issues[issues.length - 1];
     return (
         <>
@@ -423,18 +422,6 @@ const TitleIICharts: FC<{ metrics: any; resolved?: SeriesPoint[] }> = ({ metrics
                         </tbody>
                     </table>
                 </div>
-            </TrendChart>
-            <TrendChart label="Course PDF accessibility" badge="Axis zoomed: 36% to 46%" points={pdfPoints} yMin={36} yMax={46}
-                note={`YuJa Panorama score for PDFs in Canvas courses, Mar–Nov 2026. The axis is zoomed in to show movement (January was ${pct(pdf[0])}).`}
-                format={pct} compact={v => `${Math.round(v)}%`}
-                ariaLabel={`Course PDF accessibility score by month: ${pct(pdfPoints[0].value)} in ${pdfPoints[0].month} 2026, rising to ${pct(pdfPoints[pdfPoints.length - 1].value)} in ${pdfPoints[pdfPoints.length - 1].month} 2026.`}>
-                <p class="kr-def">PDFs are the lowest-scoring file type in UIC courses and the most numerous documents: 391,429 PDF files in the October 2026 report.</p>
-                <table>
-                    <caption>PDF score by month, 2026</caption>
-                    <tbody>
-                        {COURSE_SCORES.rows.map(r => <tr><th scope="row">{r.month} 2026</th><td>{pct(r.scores[5])}</td></tr>)}
-                    </tbody>
-                </table>
             </TrendChart>
         </>
     );

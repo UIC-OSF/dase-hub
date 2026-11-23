@@ -640,23 +640,23 @@ const TABS_SCRIPT = `(function () {
 // The team's tactical objectives (from Jemma's original Key Results page, with the first two combined),
 // each pointing at the card that holds its results. A card that is hidden or missing leaves the objective unlinked.
 const TACTICAL_OBJECTIVES: { slug: string; title: string; cards: string[] }[] = [
+    { slug: 'audit', title: 'Audit & Remediate UIC Digital Assets for ADA Title II Compliance', cards: ['equalify-scanning', 'equalify-reflow'] },
     { slug: 'training', title: 'Promote Accessibility Awareness & Deliver Comprehensive Training', cards: ['accessibility-training-education'] },
     { slug: 'consultation', title: 'Provide Consultation Services', cards: ['consultation-evaluation'] },
     { slug: 'outreach', title: 'Expand Accessibility Outreach & Partnerships', cards: ['digital-resources-engagement'] },
-    { slug: 'audit', title: 'Audit UIC Digital Assets', cards: ['equalify-scanning'] },
     { slug: 'compliance', title: 'Meet the ADA Title II requirement', cards: ['title-ii'] },
-    { slug: 'equalify', title: 'Launch & Integrate Equalify Platform', cards: ['equalify-scanning', 'equalify-reflow', 'equalify-usage'] },
+    { slug: 'equalify', title: 'Scale & Expand Equalify Platform', cards: ['equalify-scanning', 'equalify-reflow', 'equalify-usage'] },
     { slug: 'ai', title: 'Champion AI Innovation & Open Source', cards: ['ai-leaders'] },
 ];
 
 /** Objective slugs a card belongs to, for the "#objective-…" links that highlight every card of an objective. */
 const objectivesOf = (cardId: string) => TACTICAL_OBJECTIVES.filter(o => o.cards.includes(cardId)).map(o => o.slug).join(' ');
 
-/** Each page lists only its own objectives: Key Results has the one Title II objective, OKRA has the rest. */
-const TacticalObjectives: FC<{ objectives: Objective[]; view: 'title-ii' | 'okra' }> = ({ objectives, view }) => {
+/** Each page lists only its own objectives: the Title II dashboard has the one Title II objective, Metrics has the rest. */
+const TacticalObjectives: FC<{ objectives: Objective[]; view: 'title-ii' | 'metrics' }> = ({ objectives, view }) => {
     const items = TACTICAL_OBJECTIVES
         .map(item => ({ item, card: objectives.find(o => item.cards.includes(o.id)) }))
-        .filter(({ item, card }) => (card ? (tabOf(card) === 'title-ii' ? 'title-ii' : 'okra') : (item.slug === 'compliance' ? 'title-ii' : 'okra')) === view);
+        .filter(({ item, card }) => (card ? (tabOf(card) === 'title-ii' ? 'title-ii' : 'metrics') : (item.slug === 'compliance' ? 'title-ii' : 'metrics')) === view);
     if (items.length === 0) return null;
     const single = items.length === 1;
     return (
@@ -672,12 +672,12 @@ const TacticalObjectives: FC<{ objectives: Objective[]; view: 'title-ii' | 'okra
 /**
  * Two pages share this layout:
  *   'title-ii' — Key Results: the ADA Title II work (one section, no tabs)
- *   'okra'     — OKRA: the team's work beyond Title II (Engagement and Solutions tabs, plus the Highlights tiles)
+ *   'metrics'  — Metrics (was "OKRA" until Nov 23, 2026): the team's work beyond Title II (Engagement and Solutions tabs, plus the Highlights tiles)
  */
-type View = 'title-ii' | 'okra';
+type View = 'title-ii' | 'metrics';
 const VIEWS: Record<View, { title: string; intro: string; panels: PanelTab[] }> = {
     'title-ii': { title: 'ADA Title II Dashboard', intro: "UIC's progress toward ADA Title II digital accessibility compliance, and the numbers behind it.", panels: ['title-ii'] },
-    'okra': { title: 'OKRA', intro: "The UIC Digital Accessibility team's objectives and key results beyond ADA Title II: engagement across campus and the solutions the team builds.", panels: ['service', 'equalify', 'ai-leaders'] },
+    'metrics': { title: 'Metrics', intro: "The UIC Digital Accessibility team's objectives and key results beyond ADA Title II: engagement across campus and the solutions the team builds.", panels: ['service', 'equalify', 'ai-leaders'] },
 };
 
 export const KeyResultsPage: FC<{ objectives: Objective[]; series?: Record<string, SeriesPoint[]>; view?: View }> = ({ objectives, series, view = 'title-ii' }) => {
@@ -706,7 +706,7 @@ export const KeyResultsPage: FC<{ objectives: Objective[]; series?: Record<strin
 
                 <TacticalObjectives objectives={objectives} view={view} />
 
-                {view === 'okra'
+                {view === 'metrics'
                     ? <Highlights objective={highlights} deadline={false} />
                     : <Highlights deadline={true} />}
 
@@ -737,9 +737,9 @@ export const KeyResultsPage: FC<{ objectives: Objective[]; series?: Record<strin
                 </div>
 
                 <p class="kr-footer-note">
-                    {view === 'okra'
+                    {view === 'metrics'
                         ? <>ADA Title II work is on the <a href="/key-results">ADA Title II Dashboard</a>. </>
-                        : <>Work beyond ADA Title II is on the <a href="/okra">OKRA</a> page; the campus objective is on <a href="/objective-7">OKRA Objective 7</a>. </>}
+                        : <>Work beyond ADA Title II is on the <a href="/metrics">Metrics</a> page. </>}
                     Equalify metrics sync automatically. Team members can{' '}
                     <a href="/submit-stats">submit manual stats</a>.
                 </p>
@@ -751,6 +751,6 @@ export const KeyResultsPage: FC<{ objectives: Objective[]; series?: Record<strin
 
 export async function keyResultsHandler(c: Context) {
     const [objectives, equalify] = await Promise.all([getOrSeedObjectives(), getIntegration('equalify')]);
-    const view: View = c.req.path.replace(/\/$/, '') === '/okra' ? 'okra' : 'title-ii';
+    const view: View = c.req.path.replace(/\/$/, '') === '/metrics' ? 'metrics' : 'title-ii';
     return c.html(<KeyResultsPage objectives={visibleObjectives(objectives)} series={equalify?.series} view={view} />);
 }

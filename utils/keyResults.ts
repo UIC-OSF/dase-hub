@@ -431,7 +431,7 @@ export const SEED_OBJECTIVES: Objective[] = [
     },
     {
         id: 'audit-assets', order: 50,
-        title: 'Audit UIC Digital Assets', subtitle: 'October 2025',
+        title: 'Audit & Remediate UIC Digital Assets for ADA Title II Compliance', subtitle: 'October 2025',
         metrics: [
             {
                 id: 'scanned-urls', label: 'Equalify Scanned URLs', metric: 'Count: 159,222', currentValue: 95, status: 'high',
@@ -458,7 +458,7 @@ export const SEED_OBJECTIVES: Objective[] = [
     },
     {
         id: 'launch-equalify', order: 70, upcoming: true,
-        title: 'Launch & Integrate Equalify Platform', subtitle: 'Feb 2026 - June 2026',
+        title: 'Scale & Expand Equalify Platform', subtitle: 'Feb 2026 - June 2026',
         metrics: [
             { id: 'status', label: 'Status', metric: 'Upcoming', currentValue: 0, status: 'upcoming' },
         ],

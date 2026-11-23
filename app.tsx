@@ -10,7 +10,7 @@ import { setEvent } from '#src/utils/event';
 import { feedbackHandler, submitFeatureHandler, voteHandler, deleteFeatureHandler } from '#src/pages/feedback';
 import { homeHandler } from '#src/pages/home';
 import { keyResultsHandler } from '#src/pages/key-results';
-import { PortfolioPage, RaciPage, OkraPage, TestimonialsPage } from '#src/pages/team';
+import { PortfolioPage, RaciPage, TestimonialsPage } from '#src/pages/team';
 import { submitStatsHandler, submitStatsUpdateHandler, submitStatsAddHandler, submitStatsEditFormHandler, submitStatsNewFormHandler } from '#src/pages/submit-stats';
 import {
     adminHandler, adminLoginHandler, adminLogoutHandler, adminSyncHandler,
@@ -91,8 +91,11 @@ app.get('/portfolio', (c) => c.html(<PortfolioPage />));
 app.get('/project-portfolio', (c) => c.redirect('/portfolio', 302));
 app.get('/raci', (c) => c.html(<RaciPage />));
 app.get('/testimonials', (c) => c.html(<TestimonialsPage />));
-app.get('/okra', keyResultsHandler);
-app.get('/objective-7', (c) => c.html(<OkraPage />));
+app.get('/metrics', keyResultsHandler);
+// The page was called "OKRA" until Nov 23, 2026; browsers keep the #tab part of the link across the redirect.
+app.get('/okra', (c) => c.redirect('/metrics', 302));
+// Hidden Nov 23, 2026. OkraPage still lives in pages/team.tsx; route it here to bring the page back.
+app.get('/objective-7', (c) => c.redirect('/', 302));
 app.get('/submit-stats', submitStatsHandler);
 app.get('/submit-stats/edit', submitStatsEditFormHandler);
 app.get('/submit-stats/new', submitStatsNewFormHandler);

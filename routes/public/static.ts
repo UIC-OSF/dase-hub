@@ -22,7 +22,7 @@ export const sitemap = (c: Context) => {
     const paths = [
         { path: '/', priority: '1.0', changefreq: 'daily' },
         { path: '/key-results', priority: '0.9', changefreq: 'daily' },
-        { path: '/okra', priority: '0.9', changefreq: 'daily' },
+        { path: '/metrics', priority: '0.9', changefreq: 'daily' },
         { path: '/portfolio', priority: '0.6', changefreq: 'monthly' },
         { path: '/raci', priority: '0.6', changefreq: 'monthly' },
         { path: '/testimonials', priority: '0.6', changefreq: 'monthly' },

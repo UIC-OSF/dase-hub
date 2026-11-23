@@ -137,7 +137,7 @@ const PickerPage: FC<{ objectives: Objective[]; saved?: string; error?: string }
                 <h1>Submit Stats</h1>
                 <p class="ss-subtitle">
                     Pick the number you want to update — each one has its own short form.
-                    Changes appear on the <a href="/key-results" style="color:#C8102E;">ADA Title II</a> and <a href="/okra" style="color:#C8102E;">OKRA</a> dashboards right away.
+                    Changes appear on the <a href="/key-results" style="color:#C8102E;">ADA Title II</a> and <a href="/metrics" style="color:#C8102E;">Metrics</a> dashboards right away.
                 </p>
 
                 {saved && <div class="ss-alert ss-alert-success">✓ Saved: <span class="ss-change">{saved}</span></div>}
@@ -384,7 +384,7 @@ function gate(c: Context, error?: string) {
         <Layout title="Submit Stats" styles={styles} user={user}>
             <div class="ss-container">
                 <h1>Submit Stats</h1>
-                <p class="ss-subtitle">Update the numbers on the ADA Title II and OKRA dashboards.</p>
+                <p class="ss-subtitle">Update the numbers on the ADA Title II and Metrics dashboards.</p>
                 <PasscodeGate configured={isAdminConfigured()} error={error} />
             </div>
         </Layout>,

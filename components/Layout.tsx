@@ -66,7 +66,7 @@ export const Nav: FC<{ user?: User; product?: string }> = ({ user, product }) =>
                     <div class="nav-links">
                         <a href="/">Home</a>
                         <a href="/key-results">ADA Title II</a>
-                        <a href="/okra">OKRA</a>
+                        <a href="/metrics">Metrics</a>
                         <a href="/portfolio">Portfolio</a>
                         <a href="/raci">RACI</a>
                         <a href="/testimonials">Testimonials</a>
@@ -91,7 +91,7 @@ export const Nav: FC<{ user?: User; product?: string }> = ({ user, product }) =>
                 <div class="nav-mobile">
                     <a href="/">Home</a>
                     <a href="/key-results">ADA Title II</a>
-                        <a href="/okra">OKRA</a>
+                        <a href="/metrics">Metrics</a>
                         <a href="/portfolio">Portfolio</a>
                         <a href="/raci">RACI</a>
                         <a href="/testimonials">Testimonials</a>

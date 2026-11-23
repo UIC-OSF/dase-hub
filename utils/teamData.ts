@@ -7,12 +7,14 @@ export interface Project { title: string; tags: string[]; description: string; i
 
 // Names, order and tags are Jemma's (Nov 12, 2026). "Equalify Platform Integration and Training" combines the
 // former "Equalify Transition and Training" and "Equalify Integration" cards. Tags are listed alphabetically.
+// Scope doc, Nov 23, 2026: teams list full-time members only; Helen's edits renamed the Title II card, rewrote
+// Partnership and Outreach, and added "Accessibility Evaluation and Exception Review" (its tags and team are a best guess).
 export const PROJECT_TAGS = ['Compliance', 'Cost reduction', 'Engineering', 'Flagship', 'Ongoing', 'Partnership', 'Services', 'Sustainability'] as const;
 export type ProjectTag = typeof PROJECT_TAGS[number];
 
 export const PROJECTS: Project[] = [
     {
-        "title": "ADA Title II Deadline Preparation",
+        "title": "ADA Title II Compliance Preparation",
         "tags": [
             "Compliance",
             "Engineering",
@@ -48,8 +50,7 @@ export const PROJECTS: Project[] = [
         ],
         "team": [
             "Helen Zhou",
-            "Michael Fu",
-            "Michelle Mitchell"
+            "Michael Fu"
         ]
     },
     {
@@ -60,15 +61,37 @@ export const PROJECTS: Project[] = [
             "Partnership",
             "Services"
         ],
-        "description": "Engaging the campus community through targeted events and collaborative workshops.",
+        "description": "Building campus partnerships and engaging the university community through the Accessibility Liaison Program, collaborative events, and outreach activities.",
         "items": [
-            "Onsite Faculty Workshop",
-            "Annual Accessibility Liaison Workshop"
+            "Campus Engagement and Collaborative Initiatives",
+            "Onsite Faculty Workshops",
+            "Annual Accessibility Liaison Workshop",
+            "Accessibility Liaison Program"
+        ],
+        "team": [
+            "Helen Zhou",
+            "Michael Fu"
+        ]
+    },
+    {
+        "title": "Accessibility Evaluation and Exception Review",
+        "tags": [
+            "Compliance",
+            "Ongoing",
+            "Services"
+        ],
+        "description": "Upon request, evaluating UIC-developed applications and third-party platforms and applications adopted for campus-wide use. Reviewing accessibility documentation and providing guidance to support accessibility assessments and exception decisions.",
+        "items": [
+            "Accessibility Exception Review and Recommendations",
+            "Document Accessibility Evaluation Guidance",
+            "VPAT/ACR Review and Assessment",
+            "Third-Party Platform and Application Evaluations",
+            "UIC-Developed Application Evaluations"
         ],
         "team": [
             "Helen Zhou",
             "Michael Fu",
-            "Michelle Mitchell"
+            "Jemma Ku"
         ]
     },
     {
@@ -89,11 +112,7 @@ export const PROJECTS: Project[] = [
         "team": [
             "Blake Bertuccelli-Booth",
             "Christopher Aitken",
-            "Daniel (Trey) Samuel",
-            "Christopher Kchao",
-            "Dylan Isaac",
-            "Lucy",
-            "Brother J"
+            "Daniel (Trey) Samuel"
         ]
     },
     {
@@ -110,7 +129,6 @@ export const PROJECTS: Project[] = [
             "Iris Integration"
         ],
         "team": [
-            "Dylan Isaac",
             "Blake Bertuccelli-Booth",
             "Jemma Ku"
         ]
@@ -136,7 +154,6 @@ export const PROJECTS: Project[] = [
             "Helen Zhou",
             "Jemma Ku",
             "Michael Fu",
-            "Michelle Mitchell",
             "Blake Bertuccelli-Booth",
             "Daniel (Trey) Samuel",
             "Christopher Aitken"
@@ -158,14 +175,13 @@ export const PROJECTS: Project[] = [
         ],
         "team": [
             "Jemma Ku",
-            "Blake Bertuccelli-Booth",
-            "Michelle Mitchell",
-            "Stefin Pasternak"
+            "Blake Bertuccelli-Booth"
         ]
     },
     {
         "title": "AI Literacy Education program",
         "tags": [
+            "Cost reduction",
             "Flagship",
             "Partnership",
             "Sustainability"
@@ -174,12 +190,12 @@ export const PROJECTS: Project[] = [
         "items": [
             "Foundational Workshops",
             "Tool Evaluation Guidelines",
-            "Accessibility Implications"
+            "Accessibility Implications",
+            "Professional Development"
         ],
         "team": [
             "Blake Bertuccelli-Booth",
-            "Jemma Ku",
-            "Stefin Pasternak"
+            "Jemma Ku"
         ]
     }
 ];
@@ -237,12 +253,14 @@ export const RACI_MEMBERS: { id: string; name: string }[] = [
 
 /** The RACI page lists full-time team members only (Jemma, Nov 12, 2026). The other columns stay in the data. */
 export const RACI_FULL_TIME = ['jemma', 'helen', 'blake', 'chris-a', 'michael', 'trey'];
+/** Their "Informed" lists were long, so those are left off their cards (scope doc, Nov 23, 2026). */
+export const RACI_HIDE_INFORMED = ['chris-a', 'michael', 'trey'];
 
 /** One row per activity; values are R, A, C, I or a combination like 'A/R', keyed by member id. */
 export const RACI_ACTIVITIES: { activity: string; raci: Record<string, string> }[] = [
     {"activity": "Accessibility Training and Consultation Services", "raci": {"jemma": "C", "helen": "A", "blake": "C", "chris-a": "I", "michael": "R", "michelle": "I", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "R", "brother-j": "I", "stefin": "I"}},
-    {"activity": "Equalify Accessibility Platform", "raci": {"jemma": "A", "helen": "C", "blake": "A/R", "chris-a": "R", "michael": "C", "michelle": "I", "dylan": "R", "chris-k": "R", "trey": "R", "lucy": "R", "brother-j": "R", "stefin": "I"}},
-    {"activity": "Equalify Transition and Training", "raci": {"jemma": "A/R", "helen": "R", "blake": "R", "chris-a": "C", "michael": "R", "michelle": "I", "dylan": "C", "chris-k": "C", "trey": "C", "lucy": "R", "brother-j": "I", "stefin": "I"}},
+    {"activity": "Equalify Accessibility Dashboard", "raci": {"jemma": "A", "helen": "C", "blake": "A/R", "chris-a": "R", "michael": "C", "michelle": "I", "dylan": "R", "chris-k": "R", "trey": "R", "lucy": "R", "brother-j": "R", "stefin": "I"}},
+    {"activity": "Equalify Platform Integration and Training", "raci": {"jemma": "A", "helen": "R", "blake": "R", "chris-a": "C", "michael": "R", "michelle": "I", "dylan": "C", "chris-k": "C", "trey": "C", "lucy": "R", "brother-j": "I", "stefin": "I"}},
     {"activity": "UIC Open Source Fund", "raci": {"jemma": "A", "helen": "C", "blake": "R", "chris-a": "I", "michael": "I", "michelle": "I", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "I", "brother-j": "I", "stefin": "R"}},
     {"activity": "ADA Title II Preparation", "raci": {"jemma": "A/R", "helen": "R", "blake": "R", "chris-a": "C", "michael": "C", "michelle": "I", "dylan": "C", "chris-k": "C", "trey": "C", "lucy": "I", "brother-j": "I", "stefin": "I"}},
     {"activity": "AI Literacy", "raci": {"jemma": "A", "helen": "C", "blake": "A", "chris-a": "I", "michael": "I", "michelle": "I", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "I", "brother-j": "I", "stefin": "R"}},
@@ -250,20 +268,24 @@ export const RACI_ACTIVITIES: { activity: string; raci: Record<string, string> }
     {"activity": "Scaling Accessibility Impact Beyond UIC", "raci": {"jemma": "A", "helen": "C", "blake": "R", "chris-a": "I", "michael": "I", "michelle": "I", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "I", "brother-j": "I", "stefin": "R"}},
     {"activity": "Accessibility Resources and Tools", "raci": {"jemma": "I", "helen": "A", "blake": "R", "chris-a": "I", "michael": "C", "michelle": "I", "dylan": "C", "chris-k": "C", "trey": "C", "lucy": "I", "brother-j": "I", "stefin": "I"}},
     {"activity": "Equalify Iris", "raci": {"jemma": "I", "helen": "I", "blake": "R", "chris-a": "I", "michael": "I", "michelle": "I", "dylan": "R", "chris-k": "I", "trey": "I", "lucy": "I", "brother-j": "I", "stefin": "I"}},
-    {"activity": "Equalify Roadmap", "raci": {"jemma": "R", "helen": "C", "blake": "R", "chris-a": "I", "michael": "I", "michelle": "I", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "I", "brother-j": "I", "stefin": "I"}},
+    {"activity": "Equalify Roadmap", "raci": {"jemma": "", "helen": "C", "blake": "R", "chris-a": "I", "michael": "I", "michelle": "I", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "I", "brother-j": "I", "stefin": "I"}},
     {"activity": "Equalify Manual testing", "raci": {"jemma": "I", "helen": "C", "blake": "A", "chris-a": "I", "michael": "I", "michelle": "I", "dylan": "I", "chris-k": "R", "trey": "I", "lucy": "R", "brother-j": "R", "stefin": "I"}},
     {"activity": "UIC Accessibility Maturity Model", "raci": {"jemma": "R", "helen": "C", "blake": "I", "chris-a": "I", "michael": "I", "michelle": "I", "dylan": "I", "chris-k": "I", "trey": "R", "lucy": "I", "brother-j": "I", "stefin": "I"}},
     {"activity": "UIC Accessibility Report", "raci": {"jemma": "C", "helen": "R", "blake": "I", "chris-a": "I", "michael": "I", "michelle": "I", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "I", "brother-j": "I", "stefin": "I"}},
     {"activity": "DASE Team Support", "raci": {"jemma": "I", "helen": "A", "blake": "I", "chris-a": "I", "michael": "I", "michelle": "R", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "I", "brother-j": "I", "stefin": "I"}},
     {"activity": "Equalify Infrastructure", "raci": {"jemma": "I", "helen": "C", "blake": "C", "chris-a": "R", "michael": "I", "michelle": "I", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "I", "brother-j": "I", "stefin": "I"}},
     {"activity": "Exception Review Process", "raci": {"jemma": "A", "helen": "R", "blake": "C", "chris-a": "I", "michael": "I", "michelle": "I", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "I", "brother-j": "I", "stefin": "I"}},
-    {"activity": "UIC Stakeholder Management", "raci": {"jemma": "A", "helen": "I", "blake": "I", "chris-a": "I", "michael": "I", "michelle": "I", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "I", "brother-j": "I", "stefin": "I"}},
+    {"activity": "UIC Stakeholder Management", "raci": {"jemma": "A/R", "helen": "I", "blake": "I", "chris-a": "I", "michael": "I", "michelle": "I", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "I", "brother-j": "I", "stefin": "I"}},
     {"activity": "Budget Planning", "raci": {"jemma": "A", "helen": "I", "blake": "I", "chris-a": "I", "michael": "I", "michelle": "I", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "I", "brother-j": "I", "stefin": "I"}},
     {"activity": "Accessibility Technology Procurement", "raci": {"jemma": "C", "helen": "R", "blake": "C", "chris-a": "I", "michael": "I", "michelle": "I", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "I", "brother-j": "I", "stefin": "I"}},
-    {"activity": "Accessibility Evaluation", "raci": {"jemma": "I", "helen": "R", "blake": "I", "chris-a": "I", "michael": "R", "michelle": "I", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "R", "brother-j": "R", "stefin": "I"}},
+    {"activity": "Accessibility Evaluation", "raci": {"jemma": "A", "helen": "R", "blake": "I", "chris-a": "I", "michael": "R", "michelle": "I", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "R", "brother-j": "R", "stefin": "I"}},
     {"activity": "Scheduling Team Meetings", "raci": {"jemma": "", "helen": "I", "blake": "I", "chris-a": "I", "michael": "I", "michelle": "R", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "I", "brother-j": "I", "stefin": "I"}},
     {"activity": "Managing the Engineering Team and Open Source Fund Communication", "raci": {"jemma": "C", "helen": "I", "blake": "C", "chris-a": "I", "michael": "I", "michelle": "R", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "I", "brother-j": "I", "stefin": "C"}},
     {"activity": "Broadening Accessibility Through Open and Shared Initiatives", "raci": {"jemma": "C", "helen": "I", "blake": "A", "chris-a": "I", "michael": "I", "michelle": "I", "dylan": "I", "chris-k": "I", "trey": "I", "lucy": "I", "brother-j": "I", "stefin": "I"}},
+    // Added from the scope doc, Nov 23, 2026. Only the named person's role was given.
+    {"activity": "DASE Hub", "raci": {"chris-a": "R"}},
+    {"activity": "Strategic Planning", "raci": {"jemma": "R"}},
+    {"activity": "Accessibility Litigation", "raci": {"jemma": "A"}},
 ];
 
 /**
@@ -299,5 +321,4 @@ export const TESTIMONIALS: Testimonial[] = [
     { category: "Consultations & Trainings", quote: "It was a wonderfully organized and informative event. It is nice to share what each one of us have been doing and learning from others. [You]...did an amazing job in organizing this event." },
     { category: "Consultations & Trainings", quote: "Thank you so much for providing further clarification on this! The tips you listed at the end of your note are very helpful as well, I really appreciate you taking the time to provide clear recommendations and steps regarding this issue. You and your team are doing incredible work!" },
     { category: "Consultations & Trainings", quote: "It [the workshop on creating accessible PDFs for the University Library] was one of the most useful Zoom presentations I have watched here at UIC... Thank you for making this interesting and intelligible to those of us who have not yet worked with accessibility issues." },
-    { category: "Consultations & Trainings", quote: "It was a great presentation and we so appreciate the time and effort you put into it." },
 ];

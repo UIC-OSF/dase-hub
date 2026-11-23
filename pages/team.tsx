@@ -1,12 +1,12 @@
 import type { FC } from 'hono/jsx';
 import { Layout } from '#src/components/Layout';
 import { getCurrentUser } from '#src/utils/auth';
-import { PROJECTS, RACI_MEMBERS, RACI_FULL_TIME, RACI_ACTIVITIES, OKRA_OBJECTIVE, TESTIMONIALS } from '#src/utils/teamData';
+import { PROJECTS, RACI_MEMBERS, RACI_FULL_TIME, RACI_HIDE_INFORMED, RACI_ACTIVITIES, OKRA_OBJECTIVE, TESTIMONIALS } from '#src/utils/teamData';
 
 // Project Portfolio and RACI pages, migrated from Jemma's prototype site.
 // Content lives in utils/teamData.ts.
 
-const LAST_UPDATED = 'January 16, 2026';
+const LAST_UPDATED = 'November 23, 2026';
 
 const styles = `
 .tm-container { max-width: 1200px; margin: 0 auto; padding: 40px 24px 64px; }
@@ -130,7 +130,7 @@ export const RaciPage: FC = () => (
                 {RACI_MEMBERS.filter(member => RACI_FULL_TIME.includes(member.id)).map(member => (
                     <article class="tm-card">
                         <div class="tm-card-head"><h3>{member.name}</h3></div>
-                        {CARD_ORDER.map(code => {
+                        {CARD_ORDER.filter(code => !(code === 'I' && RACI_HIDE_INFORMED.includes(member.id))).map(code => {
                             const role = RACI_ROLES.find(r => r.code === code)!;
                             const activities = RACI_ACTIVITIES
                                 .filter(task => (task.raci[member.id] || '').includes(code))
@@ -185,7 +185,7 @@ export const OkraPage: FC = () => (
                 ))}
             </div>
             <p class="tm-links">
-                Related: <a href="/key-results">ADA Title II Dashboard</a> · <a href="/okra">OKRA</a> · <a href="/portfolio">Project Portfolio</a> · <a href="/raci">RACI Matrix</a>
+                Related: <a href="/key-results">ADA Title II Dashboard</a> · <a href="/metrics">Metrics</a> · <a href="/portfolio">Project Portfolio</a> · <a href="/raci">RACI Matrix</a>
             </p>
         </div>
     </Layout>

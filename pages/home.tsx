@@ -126,12 +126,17 @@ body {
     line-height: 1.6;
 }
 .products-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 24px;
 }
+.products-grid > .product-card {
+    box-sizing: border-box;
+    flex: 0 0 calc((100% - 48px) / 3);
+}
 @media (max-width: 900px) {
-    .products-grid { grid-template-columns: 1fr; }
+    .products-grid > .product-card { flex-basis: 100%; }
 }
 .product-card {
     background: #f8f9fa;
@@ -242,8 +247,8 @@ export const HomePage: FC = () => {
                     <h1>DASE Hub</h1>
                     <p>
                         The central dashboard for UIC Digital Accessibility Services and
-                        Engineering: one place to see our progress on ADA Title II, the rest of
-                        our work, our projects, and who does what.
+                        Engineering: one place to see our progress on ADA Title II, our
+                        projects, and our impact across campus.
                     </p>
                     <div class="hero-buttons">
                         <a href="/key-results" class="hero-btn hero-btn-primary">
@@ -254,8 +259,8 @@ export const HomePage: FC = () => {
                             </svg>
                             View the ADA Title II Dashboard
                         </a>
-                        <a href="/okra" class="hero-btn hero-btn-secondary">
-                            View OKRA
+                        <a href="/metrics" class="hero-btn hero-btn-secondary">
+                            View Metrics
                         </a>
                     </div>
                 </div>
@@ -279,25 +284,15 @@ export const HomePage: FC = () => {
                         </p>
                         <span class="product-link">View the dashboard &rarr;</span>
                     </a>
-                    <a href="/okra" class="product-card">
+                    <a href="/metrics" class="product-card">
                         <div class="product-icon">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
                         </div>
-                        <h3>OKRA</h3>
+                        <h3>Metrics</h3>
                         <p>
                             Our work beyond Title II, in three tabs: Engagement (training, consultation, outreach), Solutions (Equalify and PDF scanning), and AI Leaders.
                         </p>
-                        <span class="product-link">View OKRA &rarr;</span>
-                    </a>
-                    <a href="/objective-7" class="product-card">
-                        <div class="product-icon">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
-                        </div>
-                        <h3>OKRA Objective 7</h3>
-                        <p>
-                            The campus digital accessibility objective and its five key results, with baselines, targets, owners, and progress.
-                        </p>
-                        <span class="product-link">View Objective 7 &rarr;</span>
+                        <span class="product-link">View metrics &rarr;</span>
                     </a>
                     <a href="/portfolio" class="product-card">
                         <div class="product-icon">

@@ -139,6 +139,7 @@ const styles = `
 .kr-objectives a:hover { color: #C8102E; }
 .kr-objectives span { color: #4b5563; font-size: 14px; }
 @media (max-width: 760px) { .kr-objectives ol { columns: 1; } }
+.kr-objectives ol.kr-objectives-short { columns: 1; }
 .kr-objectives ol.kr-objectives-single { columns: 1; list-style: none; padding-left: 24px; font-size: 18px; font-weight: 600; }
 .kr-objectives-single li { margin: 0; padding: 0; }
 .kr-card:target, .kr-card:focus, .kr-card.kr-highlight { outline: 3px solid #C8102E; outline-offset: 3px; }
@@ -637,32 +638,28 @@ const TABS_SCRIPT = `(function () {
     window.addEventListener('hashchange', function () { var i = fromHash(); if (i >= 0) select(i, false, false); goToCard(); });
 })();`;
 
-// The team's tactical objectives (from Jemma's original Key Results page, with the first two combined),
-// each pointing at the card that holds its results. A card that is hidden or missing leaves the objective unlinked.
+// The team's tactical objectives, one per Metrics tab (set by Helen and Jemma, Nov 23, 2026), each pointing at the cards
+// that hold its results. A card that is hidden or missing leaves the objective unlinked.
 const TACTICAL_OBJECTIVES: { slug: string; title: string; cards: string[] }[] = [
-    { slug: 'audit', title: 'Audit & Remediate UIC Digital Assets for ADA Title II Compliance', cards: ['equalify-scanning', 'equalify-reflow'] },
-    { slug: 'training', title: 'Promote Accessibility Awareness & Deliver Comprehensive Training', cards: ['accessibility-training-education'] },
-    { slug: 'consultation', title: 'Provide Consultation Services', cards: ['consultation-evaluation'] },
-    { slug: 'outreach', title: 'Expand Accessibility Outreach & Partnerships', cards: ['digital-resources-engagement'] },
-    { slug: 'compliance', title: 'Meet the ADA Title II requirement', cards: ['title-ii'] },
-    { slug: 'equalify', title: 'Scale & Expand Equalify Platform', cards: ['equalify-scanning', 'equalify-reflow', 'equalify-usage'] },
+    { slug: 'engagement', title: 'Build Accessibility Awareness and Capacity', cards: ['accessibility-training-education', 'consultation-evaluation', 'digital-resources-engagement'] },
+    { slug: 'audit', title: 'Audit & Remediate UIC Digital Assets for ADA Title II Compliance', cards: ['equalify-scanning', 'equalify-reflow', 'equalify-usage'] },
     { slug: 'ai', title: 'Champion AI Innovation & Open Source', cards: ['ai-leaders'] },
 ];
 
 /** Objective slugs a card belongs to, for the "#objective-…" links that highlight every card of an objective. */
 const objectivesOf = (cardId: string) => TACTICAL_OBJECTIVES.filter(o => o.cards.includes(cardId)).map(o => o.slug).join(' ');
 
-/** Each page lists only its own objectives: the Title II dashboard has the one Title II objective, Metrics has the rest. */
+/** Each page lists only its own objectives. The Title II dashboard has had none since Nov 23, 2026, so the section is left out there. */
 const TacticalObjectives: FC<{ objectives: Objective[]; view: 'title-ii' | 'metrics' }> = ({ objectives, view }) => {
     const items = TACTICAL_OBJECTIVES
         .map(item => ({ item, card: objectives.find(o => item.cards.includes(o.id)) }))
-        .filter(({ item, card }) => (card ? (tabOf(card) === 'title-ii' ? 'title-ii' : 'metrics') : (item.slug === 'compliance' ? 'title-ii' : 'metrics')) === view);
+        .filter(({ card }) => (card && tabOf(card) === 'title-ii' ? 'title-ii' : 'metrics') === view);
     if (items.length === 0) return null;
     const single = items.length === 1;
     return (
         <section class="kr-objectives" aria-labelledby="kr-objectives-h">
             <h2 id="kr-objectives-h">{single ? 'Tactical Objective' : 'Tactical Objectives'}</h2>
-            <ol class={single ? 'kr-objectives-single' : undefined}>
+            <ol class={single ? 'kr-objectives-single' : items.length <= 4 ? 'kr-objectives-short' : undefined}>
                 {items.map(({ item, card }) => <li>{card ? <a href={`#objective-${item.slug}`}>{item.title}</a> : item.title}</li>)}
             </ol>
         </section>
